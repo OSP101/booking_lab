@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `Lab` ALTER COLUMN `createdAt` DROP DEFAULT;
