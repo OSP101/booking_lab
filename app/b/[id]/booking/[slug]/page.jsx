@@ -257,6 +257,24 @@ export default function Booking(props) {
         return `${day}/${month}/${yearBuddhist} ${hours}:${minutes}:${seconds}`;
     };
 
+    const handleConfirmQueue = async () => {
+        if(bookingData.redirect !== null){
+        const gradingUrl = `https://sc.osp101.dev/booking-lab/${id}/${bookingData.redirect}/${stdidDelete}`;
+        const newTab = window.open(gradingUrl, "_blank");
+      
+        window.addEventListener("message", async (event) => {
+          if (event.data === "grading_done") {
+            newTab?.close();
+      
+            await updateStatus("available");
+          }
+        });
+    }else{
+        updateStatus("available");
+    }
+      };
+      
+
     const updateStatus = async (status) => {
         status == "done" ? setIsLoading(true) : setIsLoadingDelete(true)
         try {
@@ -453,7 +471,7 @@ export default function Booking(props) {
                                         <Button color="danger" variant="light" onPress={onCloseDelete}>
                                             Close
                                         </Button>
-                                        <Button color="success" onPress={()=>updateStatus("available")} isLoading={isLoadingDelete}>
+                                        <Button color="success" onPress={()=>handleConfirmQueue()} isLoading={isLoadingDelete}>
                                             Succeed
                                         </Button>
                                     </div>
