@@ -57,7 +57,7 @@ const postLabHandler = async (req) => {
         console.log(body);
         const promisePool = mysqlPool.promise();
         // ตรวจสอบค่าที่จำเป็น
-        const { createdAt, name, image, subject, status, room } = body;
+        const { createdAt, name, image, subject, status, room, redirect } = body;
         if (!name || !image || !subject || !status || !room) {
           return NextResponse.json(
             { error: 'Missing required fields' },
@@ -68,8 +68,8 @@ const postLabHandler = async (req) => {
         const id = await createUniqueValue(promisePool, () => generateRandomId(10), "id", "Labs");
     
         const [labResult] = await promisePool.query(
-            'INSERT INTO Labs (id, createdAt, name, image, subject, status, room) VALUES (?, ?, ?, ?, ?, ?, ?)',
-            [id, createdAt, name, image, subject, status, room]
+            'INSERT INTO Labs (id, createdAt, name, image, subject, status, room, redirect) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+            [id, createdAt, name, image, subject, status, room, redirect]
         );
 
         return NextResponse.json(labResult, { status: 201 });
