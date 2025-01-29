@@ -237,6 +237,10 @@ export default function Booking(props) {
             getQueue();
         })
 
+        socket.on("checkQ", (data) => {
+            getQueue();
+        })
+
         setSocket(socket);
 
         return () => {
