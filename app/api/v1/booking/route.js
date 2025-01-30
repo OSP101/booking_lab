@@ -64,7 +64,7 @@ export async function POST(req) {
             );
         }
 
-        let [queue] = await promisePool.query('INSERT INTO Queue(table_id, student_id, status, lab_id) VALUES (?, ?, ?, ?)', [tableId, studentId, "in-progress", check1[0].id]);
+        let [queue] = await promisePool.query('INSERT INTO Queue(table_id, student_id, status, lab_id) VALUES (?, ?, ?, ?)', [tableId, studentId, status, check1[0].id]);
         let [check4] = await promisePool.query('SELECT COUNT(status) AS counter FROM Queue WHERE lab_id = ? AND status != "done"', [check1[0].id]);
         let [check3] = await promisePool.query('SELECT Labs.*, Subjects.name AS sName,Queue.create_at  FROM Labs JOIN Subjects ON Labs.subject = Subjects.id JOIN Queue ON Queue.lab_id = Labs.id WHERE Labs.id = ?', [check1[0].id]);
         const idQueue = queue.insertId;
