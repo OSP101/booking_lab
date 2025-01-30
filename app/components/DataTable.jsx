@@ -61,7 +61,7 @@ export default function DataTable({ id }) {
   const [dataSubjects, setDataSubjects] = useState([]);
   const [isSelected, setIsSelected] = useState(true);
   const [dataDeleteLabs, setDataDeleteLabs] = useState(null);
-  const [isSelectedRe, setIsSelectedRe] = React.useState(false);
+  const [isSelectedRe, setIsSelectedRe] = useState(false);
 
 
   const handleClose = (event, reason) => {
@@ -439,15 +439,16 @@ export default function DataTable({ id }) {
                     ))}
                   </Select>
 
-                  <Checkbox isSelected={isSelectedRe} onValueChange={setIsSelectedRe}>
-                    Add ID Lab score
-                  </Checkbox>
-                  <Tooltip content="For subjects that use the sc.osp.dev scoring system">
-                    <CiCircleInfo />
-                  </Tooltip>
+                  <div className="flex">
+                    <Checkbox isSelected={isSelectedRe} onValueChange={setIsSelectedRe}>
+                      <p className='text-sm'>Add ID Lab score</p>
+                    </Checkbox>
+                    <Tooltip content="For subjects that use the sc.osp.dev scoring system">
+                      <CiCircleInfo />
+                    </Tooltip>
+                  </div>
 
-
-                  {isSelected && (
+                  {isSelectedRe && (
                     <Input
                       isRequired
                       errorMessage="Please enter a valid Scoring ID"

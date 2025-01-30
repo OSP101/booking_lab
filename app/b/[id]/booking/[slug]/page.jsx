@@ -263,7 +263,7 @@ export default function Booking(props) {
 
     const handleConfirmQueue = async () => {
         if(bookingData.redirect !== null){
-        const gradingUrl = `https://sc.osp101.dev/booking-lab/${id}/${bookingData.redirect}/${stdidDelete}`;
+        const gradingUrl = `https://sc.osp101.dev/booking-lab/${id}/${bookingData.redirect}/${stdidDelete}/${session?.user?.name}`;
         const newTab = window.open(gradingUrl, "_blank");
       
         window.addEventListener("message", async (event) => {
