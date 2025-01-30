@@ -1,6 +1,6 @@
 'use client'
 import React, { useState, useEffect, Suspense } from 'react'
-import { Input, Button, InputOtp } from "@heroui/react";
+import { Input, Button, InputOtp, RadioGroup, Radio } from "@heroui/react";
 import Alert from '@mui/material/Alert';
 import Snackbar from '@mui/material/Snackbar';
 import AlertTitle from '@mui/material/AlertTitle';
@@ -24,7 +24,7 @@ export default function Join() {
     const [timeQueue, setTimeQueue] = useState();
     const [queue, setQueue] = useState([])
     const [socket, setSocket] = useState(undefined)
-
+    const [selected, setSelected] = useState("in-progress");
     useEffect(() => {
         const socket = io(`${process.env.NEXT_PUBLIC_API_SOCKET}`);
 
@@ -47,9 +47,9 @@ export default function Join() {
         setSocket(socket);
 
         return () => {
-            socket.disconnect(); // อย่าลืม disconnect เมื่อ component ถูกทำลาย
+            socket.disconnect();
         }
-    }, [tableId,dataBooking])
+    }, [tableId, dataBooking])
 
     const handleCloseError = (event, reason) => {
         if (reason === 'clickaway') {
@@ -66,7 +66,8 @@ export default function Join() {
             const data = {
                 bookingPin,
                 studentId,
-                tableId
+                tableId,
+                status: selected
             }
 
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/v1/booking`, {
@@ -85,7 +86,7 @@ export default function Join() {
             }
             if (response.status == 200) {
                 setDataBooking(result.bookingDetail);
-                getQueue({data:result.bookingDetail.id})
+                getQueue({ data: result.bookingDetail.id })
                 setTimeQueue(result.create_at);
                 setIsLoading(false)
                 setOpen(true);
@@ -149,14 +150,14 @@ export default function Join() {
                         {countQueue == 'Not' ? (
                             <div className='mx-auto'>
                                 <p className="text-center text-sm">You have been checked.</p>
-                                <h3 className="text-center text-3xl mb-3 font-bold mx-auto"><FcOk className='mx-auto text-3xl'/></h3>
+                                <h3 className="text-center text-3xl mb-3 font-bold mx-auto"><FcOk className='mx-auto text-3xl' /></h3>
                             </div>
                         ) : countQueue == 0 ? (
                             <div>
                                 <p className="text-center text-sm">It's your turn to get checked.</p>
-                                <h3 className="text-center text-3xl mb-3 font-bold"><FcCollaboration className='mx-auto text-3xl'/></h3>
+                                <h3 className="text-center text-3xl mb-3 font-bold"><FcCollaboration className='mx-auto text-3xl' /></h3>
                             </div>
-                        ): (
+                        ) : (
                             <div>
                                 <p className="text-center text-sm">You are in queue</p>
                                 <h3 className="text-center text-3xl mb-3 font-bold">{countQueue}</h3>
@@ -239,6 +240,13 @@ export default function Join() {
                                 placeholder="Enter your Table ID"
                                 className="rounded-md"
                             />
+                        </div>
+
+                        <div>
+                            <RadioGroup label="Select your booking type" orientation="horizontal" alue={selected} onValueChange={setSelected} isRequired>
+                                <Radio value="in-progress">Check work</Radio>
+                                <Radio value="issue">Issue</Radio>
+                            </RadioGroup>
                         </div>
 
                         {/* Sign In Button */}
