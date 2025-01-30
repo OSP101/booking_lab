@@ -28,6 +28,7 @@ export default function Booking(props) {
     const [queue, setQueue] = useState([])
     const [socket, setSocket] = useState(undefined)
     const { isOpen, onOpen, onOpenChange, onClose: onCloseDelete } = useDisclosure();
+    const { isOpen:isOpenIssue, onOpen:onOpenIssue, onOpenChange:onOpenChangeIssue, onClose: onCloseDeleteIssue } = useDisclosure();
 
     const [openError, setOpenError] = useState(false);
     const [errorText, setErrorText] = useState("");
@@ -57,9 +58,14 @@ export default function Booking(props) {
         }
     }, [status, router])
 
-    const openModalDelete = (data) => {
+    const openModalDelete = (data,Qdata) => {
         setStdidDelete(data)
-        onOpen()
+        if(Qdata == "in-progress"){
+           onOpen() 
+        }else{
+            onOpenIssue()
+        }
+        
     }
 
     const handleCloseError = (event, reason) => {
@@ -353,7 +359,7 @@ export default function Booking(props) {
                                                         ? "bg-yellow-200"
                                                         : table.status === "done"
                                                             ? "bg-gray-400"
-                                                            : "bg-gray-400"
+                                                            : table.status === "issue" ? "bg-red-400" : "bg-gray-400"
                                                 }`}
                                             style={{
                                                 left: `${table.x}px`,
@@ -424,16 +430,16 @@ export default function Booking(props) {
                                     <h3 className="font-bold text-lg">Queue</h3>
                                     <div className="mt-4 overflow-y-auto max-h-80">
                                         {queue.map((q, index) => (
-                                            q.status == "in-progress" &&
+                                            (q.status == "in-progress" || q.status == "issue") &&
                                             <div
                                                 key={q.table_id || `queue-${index}`}
-                                                className={`flex justify-between items-center p-2 mb-2 rounded-lg shadow ${q.status === "available" ? "bg-green-200" : "bg-yellow-200"
+                                                className={`flex justify-between items-center p-2 mb-2 rounded-lg shadow ${q.status === "in-progress" ? "bg-yellow-200" : q.status == "issue" ? "bg-red-200" : "bg-yellow-200"
                                                     }`}
-                                                onClick={() => openModalDelete(q.studentId)}
+                                                onClick={() => openModalDelete(q.studentId, q.status)}
                                             >
                                                 <div className="flex items-center">
                                                     <span
-                                                        className={`font-bold w-10 text-center ${q.status === "available" ? "text-green-600" : "text-yellow-600"
+                                                        className={`font-bold w-10 text-center ${q.status === "in-progress" ? "text-yellow-600" : q.status == "issue" ? "bg-red-600" : "bg-yellow-600"
                                                             }`}
                                                     >
                                                         {q.table_id}
@@ -468,15 +474,40 @@ export default function Booking(props) {
                                     </p>
                                 </ModalBody>
                                 <ModalFooter className="flex justify-between">
-                                    <Button color="primary" onPress={()=>updateStatus("done")} isLoading={isLoading}>
+                                    <Button color="primary" onPress={() => updateStatus("done")} isLoading={isLoading}>
                                         Delete
                                     </Button>
                                     <div>
                                         <Button color="danger" variant="light" onPress={onCloseDelete}>
                                             Close
                                         </Button>
-                                        <Button color="success" onPress={()=>handleConfirmQueue()} isLoading={isLoadingDelete}>
+                                        <Button color="success" onPress={() => handleConfirmQueue()} isLoading={isLoadingDelete}>
                                             Succeed
+                                        </Button>
+                                    </div>
+                                </ModalFooter>
+                            </>
+                        )}
+                    </ModalContent>
+                </Modal>
+
+                <Modal isOpen={isOpenIssue} onOpenChange={onOpenChangeIssue}>
+                    <ModalContent>
+                        {(onCloseDeleteIssue) => (
+                            <>
+                                <ModalHeader className="flex flex-col gap-1">Delete queue</ModalHeader>
+                                <ModalBody>
+                                    <p>
+                                        Are you really going to delete queue {stdidDelete} ?
+                                    </p>
+                                </ModalBody>
+                                <ModalFooter className="flex justify-between">
+                                    <Button color="primary" onPress={() => updateStatus("done")} isLoading={isLoading}>
+                                        Delete
+                                    </Button>
+                                    <div>
+                                        <Button color="danger" variant="light" onPress={onCloseDeleteIssue}>
+                                            Close
                                         </Button>
                                     </div>
                                 </ModalFooter>

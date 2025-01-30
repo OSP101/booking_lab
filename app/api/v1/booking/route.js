@@ -8,7 +8,7 @@ export async function POST(req) {
         if (token !== process.env.NEXT_PUBLIC_API_HEAS) {
             return NextResponse.json({ message: 'Invalid API Key' }, { status: 401 });
         }
-        const { bookingPin, studentId, tableId } = await req.json();
+        const { bookingPin, studentId, tableId, status } = await req.json();
         if (!bookingPin || !studentId || !tableId) {
             return NextResponse.json(
                 { error: 'Missing required fields' },
