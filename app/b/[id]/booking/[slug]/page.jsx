@@ -28,7 +28,7 @@ export default function Booking(props) {
     const [queue, setQueue] = useState([])
     const [socket, setSocket] = useState(undefined)
     const { isOpen, onOpen, onOpenChange, onClose: onCloseDelete } = useDisclosure();
-    const { isOpen:isOpenIssue, onOpen:onOpenIssue, onOpenChange:onOpenChangeIssue, onClose: onCloseDeleteIssue } = useDisclosure();
+    const { isOpen: isOpenIssue, onOpen: onOpenIssue, onOpenChange: onOpenChangeIssue, onClose: onCloseDeleteIssue } = useDisclosure();
 
     const [openError, setOpenError] = useState(false);
     const [errorText, setErrorText] = useState("");
@@ -58,14 +58,14 @@ export default function Booking(props) {
         }
     }, [status, router])
 
-    const openModalDelete = (data,Qdata) => {
+    const openModalDelete = (data, Qdata) => {
         setStdidDelete(data)
-        if(Qdata == "in-progress"){
-           onOpen() 
-        }else{
+        if (Qdata == "in-progress") {
+            onOpen()
+        } else {
             onOpenIssue()
         }
-        
+
     }
 
     const handleCloseError = (event, reason) => {
@@ -268,22 +268,63 @@ export default function Booking(props) {
     };
 
     const handleConfirmQueue = async () => {
-        if(bookingData.redirect !== null){
-        const gradingUrl = `https://sc.osp101.dev/booking-lab/${id}/${bookingData.redirect}/${stdidDelete}/${session?.user?.name}`;
-        const newTab = window.open(gradingUrl, "_blank");
-      
-        window.addEventListener("message", async (event) => {
-          if (event.data === "grading_done") {
-            newTab?.close();
-      
-            await updateStatus("available");
-          }
-        });
-    }else{
-        updateStatus("available");
+        if (bookingData.type == "2") {
+            setIsLoadingDelete(true)
+            setTimeout(() => {
+                const gradingUrl = `https://sc.osp101.dev/booking-lab/${id}/${bookingData.redirect}/${stdidDelete}/${session?.user?.name}`;
+                const newTab = window.open(gradingUrl, "_blank");
+
+                window.addEventListener("message", async (event) => {
+                    if (event.data === "grading_done") {
+                        newTab?.close();
+                        updateStatus("available");
+                    }
+                });
+            }, 1000);
+        } else if (bookingData.type == "1") {
+            setIsLoading(true)
+            await navigator.clipboard.writeText(stdidDelete);
+            setTimeout(() => {
+                const gradingWindow = window.open("https://it.wwry.net/scoring", "gradingPopup", "width=800,height=600");
+
+                if (!gradingWindow) {
+                    alert("Popup ถูกบล็อกโดยเบราว์เซอร์! กรุณาอนุญาตให้เว็บไซต์เปิด Popup");
+                    return;
+                }
+
+                const checkClosed = setInterval(() => {
+                    if (gradingWindow.closed) {
+                        clearInterval(checkClosed);
+                        updateStatus("available");
+                    }
+                }, 500);
+            }, 1000);
+        } else {
+            updateStatus("available");
+        }
+
+    };
+
+    const handleConfirmQueueIt = async () => {
+        setIsLoading(true)
+        await navigator.clipboard.writeText(stdidDelete);
+        setTimeout(() => {
+            const gradingWindow = window.open("https://it.wwry.net/scoring", "gradingPopup", "width=800,height=600");
+
+            if (!gradingWindow) {
+                alert("Popup ถูกบล็อกโดยเบราว์เซอร์! กรุณาอนุญาตให้เว็บไซต์เปิด Popup");
+                return;
+            }
+
+            const checkClosed = setInterval(() => {
+                if (gradingWindow.closed) {
+                    clearInterval(checkClosed);
+                    updateStatus("done");
+                }
+            }, 500);
+        }, 1000);
     }
-      };
-      
+
 
     const updateStatus = async (status) => {
         status == "done" ? setIsLoading(true) : setIsLoadingDelete(true)
@@ -339,7 +380,7 @@ export default function Booking(props) {
                             </div>
                         </div>
                     )}
-                    <div className="bg-white h-[83%] p-6 rounded-xl shadow-md flex w-[98%] mx-auto">
+                    <div className={`bg-white h-[83%] ${windowWidth >= 768 ? "p-6" : "p-0 mt-3"} rounded-xl shadow-md flex w-[98%] mx-auto`}>
                         {/* Left Panel: Tables */}
                         {windowWidth >= 768 && ( // ตรวจสอบขนาดหน้าจอ
                             <div className="w-3/4 p-4 relative">
@@ -374,7 +415,7 @@ export default function Booking(props) {
                             </div>
                         )}
                         {/* Right Panel: Details */}
-                        <div className={`${windowWidth >= 768 ? "w-1/4 " : "w-4/4"}pl-6 h-[100%]`}>
+                        <div className={`${windowWidth >= 768 ? "w-1/4 pl-6" : "w-full"}  h-[100%]`}>
                             <div className="bg-white p-4 rounded-xl shadow-md h-full">
                                 {/* Lab Information */}
                                 <div>
@@ -474,7 +515,7 @@ export default function Booking(props) {
                                     </p>
                                 </ModalBody>
                                 <ModalFooter className="flex justify-between">
-                                    <Button color="primary" onPress={() => updateStatus("done")} isLoading={isLoading}>
+                                    <Button color="primary" onPress={() => bookingData.type == "1" ? handleConfirmQueueIt() : updateStatus("done")} isLoading={isLoading}>
                                         Delete
                                     </Button>
                                     <div>
