@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useCallback, useMemo, useState, useEffect } from 'react'
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Input, Pagination, Button, Form, Spinner, Switch, cn, Tooltip } from "@heroui/react"
+import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Input, Pagination, Button, Form, Spinner, Switch, cn, Tooltip, RadioGroup, Radio } from "@heroui/react"
 import { Select, SelectItem } from "@heroui/react";
 import { User, columns, renderCell } from './columns'
 import { SearchIcon } from './icons'
@@ -61,8 +61,10 @@ export default function DataTable({ id }) {
   const [dataSubjects, setDataSubjects] = useState([]);
   const [isSelected, setIsSelected] = useState(true);
   const [dataDeleteLabs, setDataDeleteLabs] = useState(null);
-  const [isSelectedRe, setIsSelectedRe] = useState(false);
 
+
+  const [advancedSet , setAdvancedSet] = useState(false)
+  const [isSelectedRe, setIsSelectedRe] = useState("1");
 
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -173,7 +175,9 @@ export default function DataTable({ id }) {
         room: data.room,
         image: '/mind-4eve-2.png',
         status: 'inactive',
-        redirect: isSelectedRe ? data.redirect : null
+        redirect: isSelectedRe == "2" ? data.redirect : null ,
+        type: advancedSet ? isSelectedRe : null
+
       }
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/v1/labs`, {
         method: 'POST',
@@ -413,12 +417,14 @@ export default function DataTable({ id }) {
                   onReset={() => {
                     setCreateBooking(null);
                     onCloseAdd();
+                    setAdvancedSet(false)
                   }}
                   onSubmit={(e) => {
                     e.preventDefault();
                     let data = Object.fromEntries(new FormData(e.currentTarget));
                     setCreateBooking(JSON.stringify(data));
                     handleSubmitLab(data);
+                    setAdvancedSet(false)
                     onCloseAdd();
                     // console.log(data);
                   }}
@@ -439,7 +445,7 @@ export default function DataTable({ id }) {
                     ))}
                   </Select>
 
-                  <div className="flex">
+                  {/* <div className="flex">
                     <Checkbox isSelected={isSelectedRe} onValueChange={setIsSelectedRe}>
                       <p className='text-sm'>Add ID Lab score</p>
                     </Checkbox>
@@ -458,6 +464,32 @@ export default function DataTable({ id }) {
                       placeholder="Enter your Scoring ID"
                       type="number"
                     />
+                  )} */}
+
+                  <p className='text-sm text-primary cursor-pointer' onClick={()=> advancedSet ? setAdvancedSet(false) : setAdvancedSet(true)}>Advanced</p>
+                  {advancedSet && (
+                    <RadioGroup color="primary" value={isSelectedRe} onValueChange={setIsSelectedRe} size='sm'>
+                    <Radio description="Scoring system of https://it.wwry.net" value="1">
+                      IT WWRY
+                    </Radio>
+                    <Radio description="Scoring system of https://sc.osp101.dev" value="2">
+                      Scoring Classroom
+                    </Radio>
+                    
+
+                    {isSelectedRe == "2" && (
+                        <Input
+                        isRequired
+                        errorMessage="Please enter a valid Scoring ID"
+                        label="Scoring ID"
+                        labelPlacement="outside"
+                        name="redirect"
+                        placeholder="Enter your Scoring ID"
+                        type="number"
+                        className='mt-2'
+                      />
+                      )}
+                  </RadioGroup>
                   )}
 
                   <div className="flex gap-2 justify-end w-full mb-2">
