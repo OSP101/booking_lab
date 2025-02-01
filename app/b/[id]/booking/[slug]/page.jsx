@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { User, Tooltip, Chip, Switch, cn, Divider, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure, } from "@heroui/react";
 import { FaBusinessTime } from "react-icons/fa6";
 import { GiTeacher } from "react-icons/gi";
+import { FaComments } from "react-icons/fa";
 import io from "socket.io-client";
 import Alert from '@mui/material/Alert';
 import Snackbar from '@mui/material/Snackbar';
@@ -308,6 +309,7 @@ export default function Booking(props) {
                 setIsLoading(false)
                 setIsLoadingDelete(false)
                 onCloseDelete();
+                onCloseDeleteIssue();
                 socket.emit("checkQ", slug)
             } else {
                 console.error("Failed to fetch booking data.");
@@ -439,7 +441,7 @@ export default function Booking(props) {
                                             >
                                                 <div className="flex items-center">
                                                     <span
-                                                        className={`font-bold w-10 text-center ${q.status === "in-progress" ? "text-yellow-600" : q.status == "issue" ? "bg-red-600" : "bg-yellow-600"
+                                                        className={`font-bold w-10 text-center ${q.status === "in-progress" ? "text-yellow-600" : q.status == "issue" ? "text-red-600" : "text-yellow-600"
                                                             }`}
                                                     >
                                                         {q.table_id}
@@ -449,10 +451,10 @@ export default function Booking(props) {
                                                         <p className="text-xs text-gray-600 font-sans">{formatDateThai(q.time)}</p>
                                                     </div>
                                                 </div>
-                                                {q.status === "available" ? (
+                                                {q.status === "in-progress" ? (
                                                     <FaBusinessTime className={`text-3xl text-white`} />
                                                 ) : (
-                                                    <GiTeacher className={`text-3xl text-white`} />
+                                                    <FaComments className={`text-3xl text-white`} />
                                                 )}
                                             </div>
                                         ))}
