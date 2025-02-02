@@ -2,7 +2,7 @@
 import React, { useState, useEffect, use } from "react";
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import { User, Tooltip, Chip, Switch, cn, Divider, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure, } from "@heroui/react";
+import { User, Tooltip, Chip, Switch, cn, Divider, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure,Snippet } from "@heroui/react";
 import { FaBusinessTime } from "react-icons/fa6";
 import { GiTeacher } from "react-icons/gi";
 import { FaComments } from "react-icons/fa";
@@ -268,63 +268,114 @@ export default function Booking(props) {
         return `${day}/${month}/${yearBuddhist} ${hours}:${minutes}:${seconds}`;
     };
 
-    const handleConfirmQueue = async () => {
+    const handleConfirmQueue = () => {
         if (bookingData.type == "2") {
             setIsLoadingDelete(true)
-            setTimeout(() => {
-                const gradingUrl = `https://sc.osp101.dev/booking-lab/${id}/${bookingData.redirect}/${stdidDelete}/${session?.user?.name}`;
-                const newTab = window.open(gradingUrl, "_blank");
+            const gradingUrl = `https://sc.osp101.dev/booking-lab/${id}/${bookingData.redirect}/${stdidDelete}/${session?.user?.name}`;
+            const newTab = window.open(gradingUrl, "_blank");
 
-                window.addEventListener("message", async (event) => {
-                    if (event.data === "grading_done") {
-                        newTab?.close();
-                        updateStatus("available");
-                    }
-                });
-            }, 1000);
-        } else if (bookingData.type == "1") {
-            setIsLoading(true)
-            await navigator.clipboard.writeText(stdidDelete);
-            setTimeout(() => {
-                const gradingWindow = window.open("https://it.wwry.net/scoring", "gradingPopup", "width=800,height=600");
-
-                if (!gradingWindow) {
-                    alert("Popup ถูกบล็อกโดยเบราว์เซอร์! กรุณาอนุญาตให้เว็บไซต์เปิด Popup");
-                    return;
+            window.addEventListener("message", async (event) => {
+                if (event.data === "grading_done") {
+                    newTab?.close();
+                    updateStatus("available");
                 }
-
-                const checkClosed = setInterval(() => {
-                    if (gradingWindow.closed) {
-                        clearInterval(checkClosed);
-                        updateStatus("available");
-                    }
-                }, 500);
-            }, 1000);
-        } else {
-            updateStatus("available");
-        }
-
-    };
-
-    const handleConfirmQueueIt = async () => {
-        setIsLoading(true)
-        await navigator.clipboard.writeText(stdidDelete);
-        setTimeout(() => {
-            const gradingWindow = window.open("https://it.wwry.net/scoring", "gradingPopup", "width=800,height=600");
+            });
+        } else if (bookingData.type == "1") {
+            setIsLoadingDelete(true)
+            navigator.clipboard.writeText(stdidDelete);
+            const gradingWindow = window.open("https://it.wwry.net/scoring", "_blank", "width=800,height=600");
 
             if (!gradingWindow) {
                 alert("Popup ถูกบล็อกโดยเบราว์เซอร์! กรุณาอนุญาตให้เว็บไซต์เปิด Popup");
                 return;
             }
 
+            gradingWindow.focus();
+
             const checkClosed = setInterval(() => {
                 if (gradingWindow.closed) {
                     clearInterval(checkClosed);
-                    updateStatus("done");
+                    updateStatus("available");
                 }
             }, 500);
-        }, 1000);
-    }
+        } else {
+            updateStatus("available");
+        }
+
+    };
+
+    // const handleConfirmQueueIt = () => {
+    //     setIsLoading(true)
+    //     navigator.clipboard.writeText(stdidDelete);
+    //     const gradingWindow = window.open("https://it.wwry.net/scoring", "_blank", "width=800,height=600");
+
+    //     if (!gradingWindow) {
+    //         alert("Popup ถูกบล็อกโดยเบราว์เซอร์! กรุณาอนุญาตให้เว็บไซต์เปิด Popup");
+    //         return;
+    //     }
+
+    //     gradingWindow.focus();
+
+    //     const checkClosed = setInterval(() => {
+    //         if (gradingWindow.closed) {
+    //             clearInterval(checkClosed);
+    //             updateStatus("done");
+    //         }
+    //     }, 500)
+    // }
+
+    const copyText = async (text) => {
+        if (navigator.clipboard) {
+            try {
+                await navigator.clipboard.writeText(text);
+                console.log("คัดลอกสำเร็จ!");
+            } catch (err) {
+                console.error("Clipboard API ใช้ไม่ได้:", err);
+                fallbackCopyTextToClipboard(text);
+            }
+        } else {
+            fallbackCopyTextToClipboard(text);
+        }
+    };
+
+    const fallbackCopyTextToClipboard = (text) => {
+        const textArea = document.createElement("textarea");
+        textArea.value = text;
+        document.body.appendChild(textArea);
+        textArea.select();
+        textArea.setSelectionRange(0, 99999);
+
+        try {
+            document.execCommand("copy");
+            console.log("คัดลอกด้วย execCommand สำเร็จ!");
+        } catch (err) {
+            console.error("ไม่สามารถคัดลอกข้อความได้:", err);
+        }
+
+        document.body.removeChild(textArea);
+    };
+
+    const handleConfirmQueueIt = async () => {
+        setIsLoading(true)
+        await copyText(stdidDelete);
+
+        const gradingWindow = window.open("https://it.wwry.net/scoring", "_blank", "width=800,height=600");
+
+        if (!gradingWindow) {
+            alert("Popup ถูกบล็อกโดยเบราว์เซอร์! กรุณาอนุญาตให้เว็บไซต์เปิด Popup");
+            return;
+        }
+
+        gradingWindow.focus();
+
+        const checkClosed = setInterval(() => {
+            if (gradingWindow.closed) {
+                clearInterval(checkClosed);
+                updateStatus("done");
+            }
+        }, 500);
+    };
+
 
 
     const updateStatus = async (status) => {
@@ -515,6 +566,12 @@ export default function Booking(props) {
                                     <p>
                                         Are you really going to delete queue {stdidDelete} ?
                                     </p>
+                                    {bookingData.type == "1" && (
+                                        <Snippet symbol="" variant="bordered" className="my-1">
+                                            {stdidDelete}
+                                        </Snippet>
+                                    )}
+
                                 </ModalBody>
                                 <ModalFooter className="flex justify-between">
                                     <Button color="primary" onPress={() => bookingData.type == "1" ? handleConfirmQueueIt() : updateStatus("done")} isLoading={isLoading}>

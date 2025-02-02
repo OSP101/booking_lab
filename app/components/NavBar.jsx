@@ -39,7 +39,7 @@ export default function NavBar() {
                   >
                     <span className="sr-only">Open user menu</span>
                     <Image
-                      src={session.user.image || "/mind-4eve.png"}
+                      src={session.user.image || "/mind-4eve-1.png"}
                       width={30}
                       height={30}
                       alt="User profile"
