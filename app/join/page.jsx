@@ -25,50 +25,46 @@ export default function Join() {
     const [queue, setQueue] = useState([])
     const [socket, setSocket] = useState(undefined)
     const [selected, setSelected] = useState("in-progress");
+
     useEffect(() => {
         const socket = io(`${process.env.NEXT_PUBLIC_API_SOCKET}`);
 
-        socket.on("connect", () => {
-        });
+        socket.on("connect", () => {});
 
         socket.on("queueGetData", (data) => {
             if (tableId && data.data == dataBooking.id) {
                 getQueue(data);
             }
-
-        })
+        });
 
         socket.on("checkQ", (data) => {
             if (tableId && data.data == dataBooking.id) {
                 getQueue(data);
             }
-        })
+        });
 
         setSocket(socket);
 
         return () => {
             socket.disconnect();
         }
-    }, [tableId, dataBooking])
+    }, [tableId, dataBooking]);
 
     const handleCloseError = (event, reason) => {
-        if (reason === 'clickaway') {
-            return;
-        }
-
+        if (reason === 'clickaway') return;
         setOpenError(false);
     };
 
     const handleSubmit = async (e) => {
-        e.preventDefault()
-        setIsLoading(true)
+        e.preventDefault();
+        setIsLoading(true);
         try {
             const data = {
                 bookingPin,
                 studentId,
                 tableId,
                 status: selected
-            }
+            };
 
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/v1/booking`, {
                 method: 'POST',
@@ -82,21 +78,20 @@ export default function Join() {
             if (response.status == 400) {
                 setErrorText(result.message);
                 setOpenError(true);
-                setIsLoading(false)
+                setIsLoading(false);
             }
             if (response.status == 200) {
                 setDataBooking(result.bookingDetail);
-                getQueue({ data: result.bookingDetail.id })
+                getQueue({ data: result.bookingDetail.id });
                 setTimeQueue(result.create_at);
-                setIsLoading(false)
+                setIsLoading(false);
                 setOpen(true);
                 socket.emit('bookingEnllo', { data: result.bookingDetail, tableId });
             }
-
         } catch (error) {
-            console.error('Unexpected error during login:', error)
+            console.error('Unexpected error during login:', error);
         }
-    }
+    };
 
     const formatDateThai = (dateString) => {
         const date = new Date(dateString);
@@ -109,12 +104,10 @@ export default function Join() {
             minute: '2-digit',
             second: '2-digit',
         };
-
         return new Intl.DateTimeFormat('th-TH', options).format(date);
     };
 
     const getQueue = async (labId) => {
-        console.log("Lab Id: " + labId);
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/v1/queue/check`, {
                 method: 'POST',
@@ -130,7 +123,6 @@ export default function Join() {
                 const position = data.queue.findIndex(item => item.table_id.toString() == tableId);
                 const remainingQueue = position !== -1 ? position : 'Not';
                 setCountQueue(remainingQueue);
-
             } else {
                 console.error("Failed to fetch queue data.");
             }
@@ -143,7 +135,7 @@ export default function Join() {
     if (open) {
         return (
             <div className={`flex h-screen items-center justify-center bg-gradient-to-r from-blue-500 to-indigo-600 ${kanit.className}`}>
-                <div className="bg-white rounded-xl shadow-lg max-w-sm md:max-w-md">
+                <div className="bg-white rounded-xl shadow-lg max-w-sm md:max-w-md transform transition-all duration-300 hover:scale-105">
                     <div className="p-8 space-y-6">
                         <h3 className="text-center text-3xl mb-3 font-bold text-blue-600">Booking Lab</h3>
 
@@ -192,13 +184,13 @@ export default function Join() {
                 </div>
                 <PreventClose />
             </div>
-
-        )
+        );
     }
+
     return (
         <>
             <div className={`flex h-screen items-center justify-center bg-gradient-to-r from-blue-500 to-indigo-600 ${kanit.className}`}>
-                <div className="bg-white rounded-xl shadow-lg max-w-sm md:max-w-md">
+                <div className="bg-white rounded-xl shadow-lg max-w-sm md:max-w-md transform transition-all duration-300 hover:scale-105">
                     <form onSubmit={handleSubmit} className="p-8 space-y-6">
                         {/* Header */}
                         <div className="text-center pb-2">
@@ -206,7 +198,6 @@ export default function Join() {
                         </div>
 
                         {/* bookingPin Input */}
-
                         <div className='mb-3'>
                             <p className='text-sm'>Booking ID</p>
                             <InputOtp length={6} value={bookingPin} onValueChange={setBookingPin} radius='md' label="Booking ID" className='pb-4' isRequired />
@@ -242,17 +233,18 @@ export default function Join() {
                             />
                         </div>
 
+                        {/* Radio Group */}
                         <div>
-                            <RadioGroup label="Select your booking type" orientation="horizontal" alue={selected} onValueChange={setSelected} isRequired>
+                            <RadioGroup label="Select your booking type" orientation="horizontal" value={selected} onValueChange={setSelected} isRequired>
                                 <Radio value="in-progress">Check work</Radio>
                                 <Radio value="issue">Issue</Radio>
                             </RadioGroup>
                         </div>
 
-                        {/* Sign In Button */}
+                        {/* Submit Button */}
                         <Button
                             type="submit"
-                            className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-md transition duration-300"
+                            className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-md transition duration-300 transform hover:scale-105"
                             size="lg"
                             isLoading={isLoading}
                         >
@@ -262,6 +254,7 @@ export default function Join() {
                 </div>
             </div>
 
+            {/* Error Snackbar */}
             <Snackbar open={openError} autoHideDuration={6000} onClose={handleCloseError} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
                 <Alert
                     onClose={handleCloseError}
@@ -274,5 +267,5 @@ export default function Join() {
                 </Alert>
             </Snackbar>
         </>
-    )
+    );
 }
