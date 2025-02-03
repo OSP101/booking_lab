@@ -29,34 +29,34 @@ export default function RoomFloorPlan(props) {
   const pathname = usePathname()
   const [isNotFound, setIsNotFound] = useState(0);
 
-    const getCheck = async () => {
-      try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/v1/subject/${id}`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-requested-enter': process.env.NEXT_PUBLIC_API_HEAS,
-          },
-          body: JSON.stringify({ userid: session.user.id }),
-        });
-        const dataCheck = await response.json();
-        if (dataCheck.length === 0) {
-          setIsNotFound(2);
-        } else {
-          setIsNotFound(1);
-        }
-      } catch (error) {
-        console.error('Error fetching labs:', error);
+  const getCheck = async () => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/v1/subject/${id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-requested-enter': process.env.NEXT_PUBLIC_API_HEAS,
+        },
+        body: JSON.stringify({ userid: session.user.id }),
+      });
+      const dataCheck = await response.json();
+      if (dataCheck.length === 0) {
+        setIsNotFound(2);
+      } else {
+        setIsNotFound(1);
       }
-    };
-  
-    useEffect(() => {
-      if (status === 'unauthenticated') {
-        router.push('/login')
-      }
-      getCheck();
-  
-    }, [status, router])
+    } catch (error) {
+      console.error('Error fetching labs:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      router.push('/login')
+    }
+    getCheck();
+
+  }, [status, router])
 
 
   useEffect(() => {
@@ -193,7 +193,7 @@ export default function RoomFloorPlan(props) {
           <div className="h-screen flex flex-col sm:ml-64">
             <div className={`flex-grow flex flex-col p-4 mt-14 overflow-hidden ${kanit.className}`}>
               <main className='flex-grow container mx-auto overflow-hidden'>
-                
+
                 {isNotFound == 1 ? (
                   <DataTable subjectId={id} />
                 ) : isNotFound == 2 ? (
@@ -201,13 +201,11 @@ export default function RoomFloorPlan(props) {
                 ) : (
                   <LoadingStart />)}
               </main>
-              <footer className="py-6 px-4 text-center">
-                <p className="text-xs font-light text-gray-400">
-                  © 2024{' '}
-                  <Link href="/" target="_blank" className="hover:text-sky-700">
-                    Booking Lab
-                  </Link>
-                  . All Rights Reserved. Designed by{' '}
+              <footer className="mt-8 text-center text-sm text-white">
+                <p className="flex items-center justify-center gap-2">
+                  © 2024 Booking Lab v1.0.5
+                  <span className="w-1 h-1 bg-white rounded-full" />
+                  All Rights Reserved. Made with ❤️ by{' '}
                   <Link href="https://github.com/saitoarm" target="_blank" className="hover:text-sky-700">
                     Saitoarm
                   </Link>
@@ -215,7 +213,6 @@ export default function RoomFloorPlan(props) {
                   <Link href="https://github.com/OSP101" target="_blank" className="hover:text-sky-700">
                     OSP101
                   </Link>
-                  {' in CP@KKU'}
                 </p>
               </footer>
             </div>
