@@ -8,8 +8,10 @@ import io from "socket.io-client";
 import { FcOk, FcCollaboration } from "react-icons/fc";
 import { Prompt } from "next/font/google";
 const kanit = Prompt({ subsets: ["latin"], weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'] });
+import { motion } from 'framer-motion';
 
 import PreventClose from '../components/PreventClose';
+import Link from 'next/link';
 
 export default function Join() {
     const [bookingPin, setBookingPin] = useState('')
@@ -29,7 +31,7 @@ export default function Join() {
     useEffect(() => {
         const socket = io(`${process.env.NEXT_PUBLIC_API_SOCKET}`);
 
-        socket.on("connect", () => {});
+        socket.on("connect", () => { });
 
         socket.on("queueGetData", (data) => {
             if (tableId && data.data == dataBooking.id) {
@@ -135,53 +137,78 @@ export default function Join() {
     if (open) {
         return (
             <div className={`flex h-screen items-center justify-center bg-gradient-to-r from-blue-500 to-indigo-600 ${kanit.className}`}>
-                <div className="bg-white rounded-xl shadow-lg max-w-sm md:max-w-md transform transition-all duration-300 hover:scale-105">
-                    <div className="p-8 space-y-6">
-                        <h3 className="text-center text-3xl mb-3 font-bold text-blue-600">Booking Lab</h3>
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
 
-                        {countQueue == 'Not' ? (
-                            <div className='mx-auto'>
-                                <p className="text-center text-sm">You have been checked.</p>
-                                <h3 className="text-center text-3xl mb-3 font-bold mx-auto"><FcOk className='mx-auto text-3xl' /></h3>
-                            </div>
-                        ) : countQueue == 0 ? (
-                            <div>
-                                <p className="text-center text-sm">It's your turn to get checked.</p>
-                                <h3 className="text-center text-3xl mb-3 font-bold"><FcCollaboration className='mx-auto text-3xl' /></h3>
-                            </div>
-                        ) : (
-                            <div>
-                                <p className="text-center text-sm">You are in queue</p>
-                                <h3 className="text-center text-3xl mb-3 font-bold">{countQueue}</h3>
-                            </div>
-                        )}
+                >
+                    <div className="bg-white rounded-xl shadow-lg max-w-sm md:max-w-md transform transition-all duration-300 hover:scale-105">
+                        <div className="p-8 space-y-6">
+                            <h3 className="text-center text-3xl mb-3 font-bold text-blue-600">Booking Lab</h3>
 
-                        <table className="w-full">
-                            <tbody>
-                                <tr>
-                                    <td className="text-xs w-1/3">Student ID:</td>
-                                    <td className="text-xs font-bold w-2/3">{studentId}</td>
-                                </tr>
-                                <tr>
-                                    <td className="text-xs w-1/3">Table ID:</td>
-                                    <td className="text-xs font-bold w-2/3">{tableId}</td>
-                                </tr>
-                                <tr>
-                                    <td className="text-xs w-1/3">Date Time:</td>
-                                    <td className="text-xs font-bold w-2/3">{formatDateThai(timeQueue)}</td>
-                                </tr>
-                                <tr>
-                                    <td className="text-xs w-1/3">Booking Name:</td>
-                                    <td className="text-xs font-bold w-2/3">{dataBooking.name}</td>
-                                </tr>
-                                <tr>
-                                    <td className="text-xs w-1/3">Subject Name:</td>
-                                    <td className="text-xs font-bold w-2/3">{dataBooking.sName}</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                            {countQueue == 'Not' ? (
+                                <div className='mx-auto'>
+                                    <p className="text-center text-sm">You have been checked.</p>
+                                    <h3 className="text-center text-3xl mb-3 font-bold mx-auto"><FcOk className='mx-auto text-3xl' /></h3>
+                                </div>
+                            ) : countQueue == 0 ? (
+                                <div>
+                                    <p className="text-center text-sm">It's your turn to get checked.</p>
+                                    <h3 className="text-center text-3xl mb-3 font-bold"><FcCollaboration className='mx-auto text-3xl' /></h3>
+                                </div>
+                            ) : (
+                                <div>
+                                    <p className="text-center text-sm">You are in queue</p>
+                                    <h3 className="text-center text-3xl mb-3 font-bold">{countQueue}</h3>
+                                </div>
+                            )}
+
+                            <table className="w-full">
+                                <tbody>
+                                    <tr>
+                                        <td className="text-xs w-1/3">Student ID:</td>
+                                        <td className="text-xs font-bold w-2/3">{studentId}</td>
+                                    </tr>
+                                    <tr>
+                                        <td className="text-xs w-1/3">Table ID:</td>
+                                        <td className="text-xs font-bold w-2/3">{tableId}</td>
+                                    </tr>
+                                    <tr>
+                                        <td className="text-xs w-1/3">Date Time:</td>
+                                        <td className="text-xs font-bold w-2/3">{formatDateThai(timeQueue)}</td>
+                                    </tr>
+                                    <tr>
+                                        <td className="text-xs w-1/3">Booking Name:</td>
+                                        <td className="text-xs font-bold w-2/3">{dataBooking.name}</td>
+                                    </tr>
+                                    <tr>
+                                        <td className="text-xs w-1/3">Subject Name:</td>
+                                        <td className="text-xs font-bold w-2/3">{dataBooking.sName}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                </div>
+
+                    <footer className="mt-8 text-center text-sm text-white">
+                        <p className="flex items-center justify-center gap-2">
+                            © 2024 Booking Lab v1.0.5
+                            <span className="w-1 h-1 bg-white rounded-full" />
+                            All Rights Reserved
+                        </p>
+                        <p className="mt-2">
+                            Made with ❤️ by{' '}
+                            <Link href="https://github.com/saitoarm" target="_blank" className="hover:text-sky-700">
+                                Saitoarm
+                            </Link>
+                            {' & '}
+                            <Link href="https://github.com/OSP101" target="_blank" className="hover:text-sky-700">
+                                OSP101
+                            </Link>
+                        </p>
+                    </footer>
+                </motion.div>
                 <PreventClose />
             </div>
         );
@@ -189,69 +216,95 @@ export default function Join() {
 
     return (
         <>
-            <div className={`flex h-screen items-center justify-center bg-gradient-to-r from-blue-500 to-indigo-600 ${kanit.className}`}>
-                <div className="bg-white rounded-xl shadow-lg max-w-sm md:max-w-md transform transition-all duration-300 hover:scale-105">
-                    <form onSubmit={handleSubmit} className="p-8 space-y-6">
-                        {/* Header */}
-                        <div className="text-center pb-2">
-                            <h3 className="text-3xl mb-3 font-bold text-blue-600">Booking Lab</h3>
-                        </div>
+            <div className={`flex h-screen items-center justify-center bg-gradient-to-r from-purple-400 to-indigo-400 ${kanit.className}`}>
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
 
-                        {/* bookingPin Input */}
-                        <div className='mb-3'>
-                            <p className='text-sm'>Booking ID</p>
-                            <InputOtp length={6} value={bookingPin} onValueChange={setBookingPin} radius='md' label="Booking ID" className='pb-4' isRequired />
-                        </div>
+                >
+                    <div className="bg-white rounded-xl shadow-lg max-w-sm md:max-w-md transform transition-all duration-300 hover:scale-105">
+                        <form onSubmit={handleSubmit} className="p-8 space-y-6">
+                            {/* Header */}
+                            <div className="text-center pb-2">
+                                <h3 className="text-3xl mb-3 font-bold text-blue-600">Booking Lab</h3>
+                            </div>
 
-                        {/* studentId Input */}
-                        <div>
-                            <Input
-                                type={"text"}
-                                value={studentId}
-                                label="Student ID"
-                                onChange={(e) => setStudentId(e.target.value)}
-                                required
-                                size="md"
-                                labelPlacement="outside"
-                                placeholder="Enter your Student ID"
-                                className="rounded-md pb-5"
-                            />
-                        </div>
+                            {/* bookingPin Input */}
+                            <div className={`mb-3 ${kanit.className}`}>
+                                <p className='text-sm'>Booking ID</p>
+                                <InputOtp length={6} value={bookingPin} onValueChange={setBookingPin} radius='md' label="Booking ID" className='pb-4' isRequired />
+                            </div>
 
-                        {/* tableId Input */}
-                        <div>
-                            <Input
-                                type={"number"}
-                                value={tableId}
-                                label="Table ID"
-                                onChange={(e) => setTableId(e.target.value)}
-                                required
-                                size="md"
-                                labelPlacement="outside"
-                                placeholder="Enter your Table ID"
-                                className="rounded-md"
-                            />
-                        </div>
+                            {/* studentId Input */}
+                            <div className={`mb-3 ${kanit.className}`}>
+                                <Input
+                                    isRequired
+                                    type={"text"}
+                                    value={studentId}
+                                    label="Student ID"
+                                    onChange={(e) => setStudentId(e.target.value)}
+                                    required
+                                    size="md"
+                                    labelPlacement="outside"
+                                    placeholder="Enter your Student ID"
+                                    className="rounded-md pb-5"
+                                />
+                            </div>
 
-                        {/* Radio Group */}
-                        <div>
-                            <RadioGroup label="Select your booking type" orientation="horizontal" value={selected} onValueChange={setSelected} isRequired>
-                                <Radio value="in-progress">Check work</Radio>
-                                <Radio value="issue">Issue</Radio>
-                            </RadioGroup>
-                        </div>
+                            {/* tableId Input */}
+                            <div>
+                                <Input
+                                    isRequired
+                                    type={"number"}
+                                    value={tableId}
+                                    label="Table ID"
+                                    onChange={(e) => setTableId(e.target.value)}
+                                    required
+                                    size="md"
+                                    labelPlacement="outside"
+                                    placeholder="Enter your Table ID"
+                                    className="rounded-md"
+                                />
+                            </div>
 
-                        {/* Submit Button */}
-                        <Button
-                            type="submit"
-                            className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-md transition duration-300 transform hover:scale-105"
-                            size="lg"
-                            isLoading={isLoading}
-                        >
-                            Booking!
-                        </Button>
-                    </form>
-                </div>
+                            {/* Radio Group */}
+                            <div>
+                                <RadioGroup orientation="horizontal" value={selected} onValueChange={setSelected} isRequired className='text-sm text-black'>
+                                    <Radio value="in-progress">Check work</Radio>
+                                    <Radio value="issue">Issue</Radio>
+                                </RadioGroup>
+                            </div>
+
+                            {/* Submit Button */}
+                            <Button
+                                type="submit"
+                                className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-md transition duration-300 transform hover:scale-105"
+                                size="lg"
+                                isLoading={isLoading}
+                            >
+                                Booking!
+                            </Button>
+                        </form>
+                    </div>
+                    <footer className="mt-8 text-center text-sm text-white">
+                        <p className="flex items-center justify-center gap-2">
+                            © 2024 Booking Lab v1.0.5
+                            <span className="w-1 h-1 bg-white rounded-full" />
+                            All Rights Reserved
+                        </p>
+                        <p className="mt-2">
+                            Made with ❤️ by{' '}
+                            <Link href="https://github.com/saitoarm" target="_blank" className="hover:text-sky-700">
+                                Saitoarm
+                            </Link>
+                            {' & '}
+                            <Link href="https://github.com/OSP101" target="_blank" className="hover:text-sky-700">
+                                OSP101
+                            </Link>
+                        </p>
+                    </footer>
+                </motion.div>
             </div>
 
             {/* Error Snackbar */}

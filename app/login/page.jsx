@@ -167,6 +167,23 @@ function LoginPage() {
                         </div>
                     </form>
                 </div>
+                <footer className="mt-8 text-center text-sm text-white">
+                    <p className="flex items-center justify-center gap-2">
+                        © 2024 Booking Lab v1.0.5
+                        <span className="w-1 h-1 bg-white rounded-full" />
+                        All Rights Reserved
+                    </p>
+                    <p className="mt-2">
+                        Made with ❤️ by{' '}
+                        <Link href="https://github.com/saitoarm" target="_blank" className="hover:text-sky-700">
+                            Saitoarm
+                        </Link>
+                        {' & '}
+                        <Link href="https://github.com/OSP101" target="_blank" className="hover:text-sky-700">
+                            OSP101
+                        </Link>
+                    </p>
+                </footer>
             </div>
             <Suspense>
                 <Snackbar open={open} autoHideDuration={6000} onClose={handleClose} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>

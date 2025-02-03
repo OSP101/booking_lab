@@ -200,7 +200,7 @@ export default function RoomFloorPlan(props) {
                 <p className="text-xs font-light text-gray-400">
                   © 2024{' '}
                   <Link href="/" target="_blank" className="hover:text-sky-700">
-                    Booking Lab
+                    Booking Lab v1.0.5
                   </Link>
                   . All Rights Reserved. Designed by{' '}
                   <Link href="https://github.com/saitoarm" target="_blank" className="hover:text-sky-700">
