@@ -2,7 +2,7 @@
 import React, { useState, useEffect, use } from "react";
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import { User, Tooltip, Chip, Switch, cn, Divider, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure,Snippet } from "@heroui/react";
+import { User, Tooltip, Chip, Switch, cn, Divider, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure, Snippet } from "@heroui/react";
 import { FaBusinessTime } from "react-icons/fa6";
 import { GiTeacher } from "react-icons/gi";
 import { FaComments } from "react-icons/fa";
@@ -256,9 +256,9 @@ export default function Booking(props) {
     }, [])
 
     const formatDateThai = (dateString) => {
-        const date = new Date(dateString + 'Z');
+        const date = new Date(dateString);
 
-        const hours = String(date.getUTCHours()).padStart(2, '0');
+        const hours = String(date.getUTCHours() + 7).padStart(2, '0');
         const minutes = String(date.getUTCMinutes()).padStart(2, '0');
         const seconds = String(date.getUTCSeconds()).padStart(2, '0');
 
@@ -410,6 +410,7 @@ export default function Booking(props) {
         }
     };
 
+
     if (isNotFound == 1 && loadingData) {
         return (
             <div className={`h-screen flex bg-gray-100 items-end justify-center ${kanit.className}`}>
@@ -536,14 +537,9 @@ export default function Booking(props) {
                                                     </span>
                                                     <div>
                                                         <p className="text-sm">{q.studentId}</p>
-                                                        <p className="text-xs text-gray-600 font-sans">{formatDateThai(q.time)} Col: {roomData.find(data => data.id == q.table_id).col} Row: {roomData.find(data => data.id == q.table_id).rows} Zone: {roomData.find(data => data.id == q.table_id).zone}</p>
+                                                        <p className="text-xs text-gray-600 font-sans">{formatDateThai(q.time)} Col: {roomData.find(data => data.table_id == q.table_id).col} Row: {roomData.find(data => data.table_id == q.table_id).rows} Zone: {roomData.find(data => data.table_id == q.table_id).zone}</p>
                                                     </div>
-                                                    <span
-                                                        className={`font-bold w-10 text-center ${q.status === "in-progress" ? "text-yellow-600" : q.status == "issue" ? "text-red-600" : "text-yellow-600"
-                                                            }`}
-                                                    >
-                                                        C: {roomData.find(data => data.id == q.table_id).col} R: {roomData.find(data => data.id == q.table_id).rows} 
-                                                    </span>
+
                                                 </div>
                                                 {q.status === "in-progress" ? (
                                                     <FaBusinessTime className={`text-3xl text-white`} />

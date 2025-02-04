@@ -96,7 +96,7 @@ export default function Join() {
     };
 
     const formatDateThai = (dateString) => {
-        const date = new Date(dateString + 'Z');
+        const date = new Date(dateString);
         const options = {
             year: 'numeric',
             month: 'long',
@@ -105,8 +105,8 @@ export default function Join() {
             hour: '2-digit',
             minute: '2-digit',
             second: '2-digit',
-            timeZone: 'UTC'
         };
+
         return new Intl.DateTimeFormat('th-TH', options).format(date);
     };
 
