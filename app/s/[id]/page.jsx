@@ -187,19 +187,19 @@ export default function RoomFloorPlan(props) {
                 <li>
                   <Link href={`/b/${id}`} className="flex items-center p-2 pl-4 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                     <FaBookmark className="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" />
-                    <span className="ms-3">Booking</span>
+                    <span className={`ms-3 ${kanit.className}`}>Booking</span>
                   </Link>
                 </li>
                 <li>
                   <Link href={`/r/${id}`} className="flex items-center p-2 pl-4 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                     <FaUserCog className="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" />
-                    <span className="flex-1 ms-3 whitespace-nowrap">Users</span>
+                    <span className={`flex-1 ms-3 whitespace-nowrap ${kanit.className}`}>Users</span>
                   </Link>
                 </li>
                 <li>
                   <Link href={`/s/${id}`} className="flex items-center p-2 pl-4 text-white rounded-lg bg-primary group">
                     <AiFillSetting className="w-5 h-5 text-white" />
-                    <span className="flex-1 ms-3 whitespace-nowrap">Setting</span>
+                    <span className={`flex-1 ms-3 whitespace-nowrap ${kanit.className}`}>Setting</span>
                   </Link>
                 </li>
               </ul>
@@ -220,11 +220,11 @@ export default function RoomFloorPlan(props) {
                   <NotPage />
                 )}
               </main>
-              <footer className="py-6 px-4 text-center">
-            <p className="flex items-center justify-center gap-2">
+              <footer className="py-4 px-4 text-center">
+            <p className="text-xs font-light text-gray-400">
               © 2024 Booking Lab v1.0.5
-              <span className="w-1 h-1 bg-white rounded-full" />
-              All Rights Reserved. Made with ❤️ by{' '}
+              <span className="w-1 h-1 bg-gray-400 rounded-full" />
+              All Rights Reserved.{' '}Made with ❤️ by{' '}
               <Link href="https://github.com/saitoarm" target="_blank" className="hover:text-sky-700">
                 Saitoarm
               </Link>

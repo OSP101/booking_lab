@@ -31,10 +31,10 @@ export default function RoomFloorPlan() {
             <CardMain />
           </main>
           <footer className="py-6 px-4 text-center">
-            <p className="flex items-center justify-center gap-2">
+            <p className="text-xs font-light text-gray-400">
               © 2024 Booking Lab v1.0.5
-              <span className="w-1 h-1 bg-white rounded-full" />
-              All Rights Reserved. Made with ❤️ by{' '}
+              <span className="w-1 h-1 bg-gray-400 rounded-full" />
+              All Rights Reserved.{' '}Made with ❤️ by{' '}
               <Link href="https://github.com/saitoarm" target="_blank" className="hover:text-sky-700">
                 Saitoarm
               </Link>

@@ -336,7 +336,7 @@ export default function DataTable({ subjectId }) {
                         onClear={() => onClear()}
                         onValueChange={onSearchChange}
                     />
-                    {(session.user.role === 'admin' || session.user.role === 'Teacher') && (
+                    {(session.user.role === 'admin' || session.user.role === 'teacher') && (
                         <div>
                             <Button color="primary" onPress={openCreate}><IoIosAdd className='text-xl' />Add user</Button>
                             <Button color="warning" onPress={onOpenAdd} className='ml-3'><FaUserPlus className='text-xl' />Create user</Button>

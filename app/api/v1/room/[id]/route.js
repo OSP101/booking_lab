@@ -12,7 +12,7 @@ export async function GET(req, { params }) {
         const { id } = await params
         const promisePool = mysqlPool.promise();
         let [booking1] = await promisePool.query('SELECT Labs.*, Subjects.name AS sName FROM Labs JOIN Subjects ON Labs.subject = Subjects.id WHERE Labs.id = ?', [id]);
-        let [booking2] = await promisePool.query('SELECT table_id, name, x, y FROM Room_detail WHERE room_id = ?', [booking1[0].room]);
+        let [booking2] = await promisePool.query('SELECT table_id, name, x, y,`col`,`rows`,`zone` FROM Room_detail WHERE room_id = ?', [booking1[0].room]);
         
         const data = {
             roomDetail: booking2,

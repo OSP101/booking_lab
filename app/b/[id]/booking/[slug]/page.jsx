@@ -256,16 +256,13 @@ export default function Booking(props) {
     }, [])
 
     const formatDateThai = (dateString) => {
-        const date = new Date(dateString);
-        const yearBuddhist = date.getFullYear() + 543;
+        const date = new Date(dateString + 'Z');
 
-        const day = String(date.getDate()).padStart(2, '0');
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const hours = String(date.getHours()).padStart(2, '0');
-        const minutes = String(date.getMinutes()).padStart(2, '0');
-        const seconds = String(date.getSeconds()).padStart(2, '0');
+        const hours = String(date.getUTCHours()).padStart(2, '0');
+        const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+        const seconds = String(date.getUTCSeconds()).padStart(2, '0');
 
-        return `${day}/${month}/${yearBuddhist} ${hours}:${minutes}:${seconds}`;
+        return `${hours}:${minutes}:${seconds}`;
     };
 
     const handleConfirmQueue = () => {
@@ -282,7 +279,6 @@ export default function Booking(props) {
             });
         } else if (bookingData.type == "1") {
             setIsLoadingDelete(true)
-            navigator.clipboard.writeText(stdidDelete);
             const gradingWindow = window.open("https://it.wwry.net/scoring", "_blank", "width=800,height=600");
 
             if (!gradingWindow) {
@@ -540,8 +536,14 @@ export default function Booking(props) {
                                                     </span>
                                                     <div>
                                                         <p className="text-sm">{q.studentId}</p>
-                                                        <p className="text-xs text-gray-600 font-sans">{formatDateThai(q.time)}</p>
+                                                        <p className="text-xs text-gray-600 font-sans">{formatDateThai(q.time)} Col: {roomData.find(data => data.id == q.table_id).col} Row: {roomData.find(data => data.id == q.table_id).rows} Zone: {roomData.find(data => data.id == q.table_id).zone}</p>
                                                     </div>
+                                                    <span
+                                                        className={`font-bold w-10 text-center ${q.status === "in-progress" ? "text-yellow-600" : q.status == "issue" ? "text-red-600" : "text-yellow-600"
+                                                            }`}
+                                                    >
+                                                        C: {roomData.find(data => data.id == q.table_id).col} R: {roomData.find(data => data.id == q.table_id).rows} 
+                                                    </span>
                                                 </div>
                                                 {q.status === "in-progress" ? (
                                                     <FaBusinessTime className={`text-3xl text-white`} />
