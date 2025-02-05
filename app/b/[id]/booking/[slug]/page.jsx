@@ -3,15 +3,17 @@ import React, { useState, useEffect, use } from "react";
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { User, Tooltip, Chip, Switch, cn, Divider, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure, Snippet } from "@heroui/react";
+import { Spinner } from "@heroui/react";
 import { FaBusinessTime } from "react-icons/fa6";
 import { GiTeacher } from "react-icons/gi";
-import { FaComments } from "react-icons/fa";
+import { FaFireAlt } from "react-icons/fa";
 import io from "socket.io-client";
 import Alert from '@mui/material/Alert';
 import Snackbar from '@mui/material/Snackbar';
 import AlertTitle from '@mui/material/AlertTitle';
 import { Prompt } from "next/font/google";
 const kanit = Prompt({ subsets: ["latin"], weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'] });
+
 
 export default function Booking(props) {
     const { data: session, status } = useSession()
@@ -40,6 +42,7 @@ export default function Booking(props) {
     const [stdidDelete, setStdidDelete] = useState('');
 
     const router = useRouter()
+    let audio = new Audio("/notification.mp3");
 
     useEffect(() => {
         const handleResize = () => {
@@ -78,8 +81,8 @@ export default function Booking(props) {
     };
 
     const switchState = async (e) => {
-        console.log("Switch:" + e);
 
+        // audio.play();
         const dataStatus = e ? "active" : "inactive";
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/v1/booking/${slug}`, {
@@ -94,6 +97,9 @@ export default function Booking(props) {
             if (response.ok) {
                 setIsSelected(e);
                 setBookingData(data.bookingDetail);
+                audio.play().then(() => {
+                    console.log("✅ เปิดเสียงแจ้งเตือนสำเร็จ");
+                }).catch(err => console.error("❌ ไม่สามารถเล่นเสียงได้:", err));
             } else {
                 console.error("Failed to fetch queue data.");
             }
@@ -241,6 +247,8 @@ export default function Booking(props) {
         });
 
         socket.on("queueGetData", (data) => {
+            console.log("🔔 มีข้อความใหม่:", data);
+            audio.play().catch(err => console.error("เล่นเสียงไม่ได้:", err));
             getQueue();
         })
 
@@ -518,13 +526,13 @@ export default function Booking(props) {
 
                                 {/* Queue List */}
                                 <div className="mt-5">
-                                    <h3 className="font-bold text-lg">Queue</h3>
+                                    <h3 className="font-bold text-lg">Queue ({queue.filter(q => q.status === "in-progress").length + queue.filter(q => q.status === "issue").length})</h3>
                                     <div className="mt-4 overflow-y-auto max-h-80">
                                         {queue.map((q, index) => (
                                             (q.status == "in-progress" || q.status == "issue") &&
                                             <div
                                                 key={q.table_id || `queue-${index}`}
-                                                className={`flex justify-between items-center p-2 mb-2 rounded-lg shadow ${q.status === "in-progress" ? "bg-yellow-200" : q.status == "issue" ? "bg-red-200" : "bg-yellow-200"
+                                                className={`flex justify-between cursor-pointer items-center p-2 mb-2 rounded-lg shadow ${q.status === "in-progress" ? "bg-yellow-200" : q.status == "issue" ? "bg-red-200" : "bg-yellow-200"
                                                     }`}
                                                 onClick={() => openModalDelete(q.studentId, q.status)}
                                             >
@@ -536,16 +544,15 @@ export default function Booking(props) {
                                                         {q.table_id}
                                                     </span>
                                                     <div>
-                                                        <p className="text-sm">{q.studentId}</p>
+                                                        <p className="text-sm">{q.studentId} {index == queue.length - 1 && (<Chip size="sm" color="danger">New!</Chip>)}</p>
                                                         <p className="text-xs text-gray-600 font-sans">{formatDateThai(q.time)} Col: {roomData.find(data => data.table_id == q.table_id).col} Row: {roomData.find(data => data.table_id == q.table_id).rows} Zone: {roomData.find(data => data.table_id == q.table_id).zone}</p>
                                                     </div>
 
                                                 </div>
-                                                {q.status === "in-progress" ? (
-                                                    <FaBusinessTime className={`text-3xl text-white`} />
-                                                ) : (
-                                                    <FaComments className={`text-3xl text-white`} />
+                                                {index === queue.filter(q => q.status === "available").length && (
+                                                    <FaFireAlt className="text-xl text-red-600" />
                                                 )}
+
                                             </div>
                                         ))}
                                     </div>
@@ -636,34 +643,9 @@ export default function Booking(props) {
 }
 
 function LoadingStart() {
-    <style jsx>{`
-      @keyframes text-gradient {
-        0% {
-          background-position: 0% 50%;
-        }
-        100% {
-          background-position: 100% 50%;
-        }
-      }
-    
-      .animate-text-gradient {
-        animation: text-gradient 3s linear infinite;
-      }
-    `}</style>
     return (
-        <div>
-            <p
-                className={`inline-flex md:ml-1 font-medium bg-clip-text text-transparent bg-[linear-gradient(90deg,#D6009A,#8a56cc,#D6009A)] dark:bg-[linear-gradient(90deg,#FFEBF9,#8a56cc,#FFEBF9)] animate-text-gradient ${kanit.className}`}
-                style={{
-                    fontSize: "2rem",
-                    backgroundSize: "200% 200%",
-                    WebkitBackgroundClip: "text",
-                    backgroundClip: "text",
-                    color: "transparent",
-                }}
-            >
-                Loading...
-            </p>
+        <div className="min-h-screen flex items-center justify-center">
+          <Spinner size="lg" />
         </div>
-    )
+      )
 }

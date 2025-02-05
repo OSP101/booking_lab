@@ -11,9 +11,36 @@ const kanit = Prompt({ subsets: ["latin"], weight: ['100', '200', '300', '400', 
 import { motion } from 'framer-motion';
 
 import PreventClose from '../components/PreventClose';
+// import TourGuide from "../components/TourGuide";
+import Joyride, { Step } from 'react-joyride';
+
 import Link from 'next/link';
 
 export default function Join() {
+
+    const [run, setRun] = useState(false);
+
+    useEffect(() => {
+        const hasSeenTour = localStorage.getItem("hasSeenTour");
+        if (!hasSeenTour) {
+            setRun(true); // เริ่ม tutorial ครั้งแรก
+        }
+    }, []);
+
+    const handleTourEnd = (data) => {
+        if (data.status === "finished" || data.status === "skipped") {
+            localStorage.setItem("hasSeenTour", "true");
+            setRun(false);
+        }
+    };
+    const steps = [
+        { target: '.booking-input', content: 'กรอก Booking ID ที่ปรากฎบนหน้าจอหน้าห้องด้านบน', placement: "right" },
+        { target: '.student-id-input', content: 'ใส่รหัสนักศึกษา', placement: "right" },
+        { target: '.table-id-input', content: 'ใส่หมายเลขโต๊ะที่ต้องการจอง โดยให้ดูรหัสที่ติดอยู่โต๊ะ', placement: "right" },
+        { target: '.radio-group', content: 'เลือกสถานะการจอง', placement: "right" },
+        { target: '.submit-btn', content: 'กดปุ่มนี้เพื่อจองคิว', placement: "right" }
+    ];
+
     const [bookingPin, setBookingPin] = useState('')
     const [studentId, setStudentId] = useState('')
     const [tableId, setTableId] = useState('')
@@ -137,7 +164,7 @@ export default function Join() {
 
     if (open) {
         return (
-            <div className={`flex h-screen items-center justify-center bg-gradient-to-r from-blue-500 to-indigo-600 ${kanit.className}`}>
+            <div className={`flex h-screen items-center justify-center bg-gradient-to-r from-purple-400 to-indigo-400 ${kanit.className}`}>
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -193,12 +220,12 @@ export default function Join() {
                     </div>
 
                     <footer className="mt-8 text-center text-sm text-white">
-                        <p className="flex items-center justify-center gap-2">
+                        <p className="flex items-center justify-center gap-2 text-xs">
                             © 2024 Booking Lab v1.0.5
                             <span className="w-1 h-1 bg-white rounded-full" />
                             All Rights Reserved
                         </p>
-                        <p className="mt-2">
+                        <p className="mt-2 text-xs">
                             Made with ❤️ by{' '}
                             <Link href="https://github.com/saitoarm" target="_blank" className="hover:text-sky-700">
                                 SaitoArm
@@ -217,6 +244,19 @@ export default function Join() {
 
     return (
         <>
+            {/* <TourGuide /> */}
+            <Joyride
+                steps={steps}
+                run={run}
+                continuous
+                showSkipButton
+                disableOverlayClose
+                locale={{ next: "ถัดไป", back: "ย้อนกลับ", skip: "ข้าม", last: "เสร็จสิ้น" }}
+                callback={handleTourEnd}
+                styles={{
+                    options: { arrowColor: "#fff", primaryColor: "#007bff", textColor: "#333" },
+                }}
+            />
             <div className={`flex h-screen items-center justify-center bg-gradient-to-r from-purple-400 to-indigo-400 ${kanit.className}`}>
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
@@ -225,21 +265,22 @@ export default function Join() {
 
                 >
                     <div className="bg-white rounded-xl shadow-lg max-w-sm md:max-w-md transform transition-all duration-300 hover:scale-105">
-                        <form onSubmit={handleSubmit} className="p-8 space-y-6">
+                        <form onSubmit={handleSubmit} className="p-8 space-y-6" id="bookingForm">
                             {/* Header */}
                             <div className="text-center pb-2">
                                 <h3 className="text-3xl mb-3 font-bold text-blue-600">Booking Lab</h3>
                             </div>
 
                             {/* bookingPin Input */}
-                            <div className={`mb-3 ${kanit.className}`}>
+                            <div className={`pb-4 ${kanit.className}`}>
                                 <p className='text-sm'>Booking ID</p>
-                                <InputOtp length={6} value={bookingPin} onValueChange={setBookingPin} radius='md' label="Booking ID" className='pb-4' isRequired />
+                                <InputOtp id="bookingId" length={6} value={bookingPin} onValueChange={setBookingPin} radius='md' label="Booking ID" className='booking-input' isRequired />
                             </div>
 
                             {/* studentId Input */}
                             <div className={`mb-3 ${kanit.className}`}>
                                 <Input
+                                    id="studentId"
                                     isRequired
                                     type={"text"}
                                     value={studentId}
@@ -249,13 +290,14 @@ export default function Join() {
                                     size="md"
                                     labelPlacement="outside"
                                     placeholder="Enter your Student ID"
-                                    className="rounded-md pb-5"
+                                    className="rounded-md pb-5 student-id-input"
                                 />
                             </div>
 
                             {/* tableId Input */}
-                            <div>
+                            <div className="">
                                 <Input
+                                    id="tableId"
                                     isRequired
                                     type={"number"}
                                     value={tableId}
@@ -265,13 +307,13 @@ export default function Join() {
                                     size="md"
                                     labelPlacement="outside"
                                     placeholder="Enter your Table ID"
-                                    className="rounded-md"
+                                    className="rounded-md table-id-input"
                                 />
                             </div>
 
                             {/* Radio Group */}
-                            <div>
-                                <RadioGroup orientation="horizontal" value={selected} onValueChange={setSelected} isRequired className='text-sm text-black'>
+                            <div className="radio-group">
+                                <RadioGroup id='Radio' orientation="horizontal" value={selected} onValueChange={setSelected} isRequired className='text-sm text-black'>
                                     <Radio value="in-progress">Check work</Radio>
                                     <Radio value="issue">Issue</Radio>
                                 </RadioGroup>
@@ -280,7 +322,8 @@ export default function Join() {
                             {/* Submit Button */}
                             <Button
                                 type="submit"
-                                className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-md transition duration-300 transform hover:scale-105"
+                                id='submitButton'
+                                className="submit-btn w-full bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-md transition duration-300 transform hover:scale-105"
                                 size="lg"
                                 isLoading={isLoading}
                             >
@@ -289,15 +332,15 @@ export default function Join() {
                         </form>
                     </div>
                     <footer className="mt-8 text-center text-sm text-white">
-                        <p className="flex items-center justify-center gap-2">
-                            © 2024 Booking Lab v1.0.5
+                        <p className="flex items-center justify-center gap-2 text-xs">
+                            © 2024 Booking Lab v{process.env.NEXT_PUBLIC_VERSION}
                             <span className="w-1 h-1 bg-white rounded-full" />
                             All Rights Reserved
                         </p>
-                        <p className="mt-2">
+                        <p className="mt-2 text-xs">
                             Made with ❤️ by{' '}
                             <Link href="https://github.com/saitoarm" target="_blank" className="hover:text-sky-700">
-                                Saitoarm
+                                SaitoArm
                             </Link>
                             {' & '}
                             <Link href="https://github.com/OSP101" target="_blank" className="hover:text-sky-700">

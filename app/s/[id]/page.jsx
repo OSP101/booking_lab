@@ -11,6 +11,7 @@ import NavBarOne from "../../components/NavBarOne";
 import { Skeleton, Input, Textarea } from "@heroui/react";
 import { FaBookmark, FaUserCog } from "react-icons/fa";
 import { AiFillSetting } from "react-icons/ai";
+import { Spinner } from "@heroui/react";
 
 export default function RoomFloorPlan(props) {
 
@@ -221,19 +222,19 @@ export default function RoomFloorPlan(props) {
                 )}
               </main>
               <footer className="py-4 px-4 text-center">
-            <p className="text-xs font-light text-gray-400">
-              © 2024 Booking Lab v1.0.5
-              <span className="w-1 h-1 bg-gray-400 rounded-full" />
-              All Rights Reserved.{' '}Made with ❤️ by{' '}
-              <Link href="https://github.com/saitoarm" target="_blank" className="hover:text-sky-700">
-                Saitoarm
-              </Link>
-              {' & '}
-              <Link href="https://github.com/OSP101" target="_blank" className="hover:text-sky-700">
-                OSP101
-              </Link>
-            </p>
-          </footer>
+                <p className="text-xs font-light text-gray-400">
+                  © 2024 Booking Lab v{process.env.NEXT_PUBLIC_VERSION}
+                  <span className="w-1 h-1 bg-gray-400 rounded-full" />
+                  {' '}All Rights Reserved.{' '}Made with ❤️ by{' '}
+                  <Link href="https://github.com/saitoarm" target="_blank" className="hover:text-sky-700">
+                    SaitoArm
+                  </Link>
+                  {' & '}
+                  <Link href="https://github.com/OSP101" target="_blank" className="hover:text-sky-700">
+                    OSP101
+                  </Link>
+                </p>
+              </footer>
             </div>
           </div>
         </>
@@ -241,41 +242,14 @@ export default function RoomFloorPlan(props) {
     );
   }
   return (
-    <div className={`min-h-screen flex flex-col ${kanit.className}`}>
-
-    </div>
+    <LoadingStart />
   );
 }
 
 function LoadingStart() {
-  <style jsx>{`
-    @keyframes text-gradient {
-      0% {
-        background-position: 0% 50%;
-      }
-      100% {
-        background-position: 100% 50%;
-      }
-    }
-  
-    .animate-text-gradient {
-      animation: text-gradient 3s linear infinite;
-    }
-  `}</style>
   return (
-    <div>
-      <p
-        className={`${kanit.className} inline-flex md:ml-1 font-medium bg-clip-text text-transparent bg-[linear-gradient(90deg,#D6009A,#8a56cc,#D6009A)] dark:bg-[linear-gradient(90deg,#FFEBF9,#8a56cc,#FFEBF9)] animate-text-gradient`}
-        style={{
-          fontSize: "2rem",
-          backgroundSize: "200% 200%",
-          WebkitBackgroundClip: "text",
-          backgroundClip: "text",
-          color: "transparent",
-        }}
-      >
-        Loading...
-      </p>
+    <div className="min-h-screen flex items-center justify-center">
+      <Spinner size="lg" />
     </div>
   )
 }
