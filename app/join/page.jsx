@@ -12,34 +12,34 @@ import { motion } from 'framer-motion';
 
 import PreventClose from '../components/PreventClose';
 // import TourGuide from "../components/TourGuide";
-import Joyride, { Step } from 'react-joyride';
+// import Joyride, { Step } from 'react-joyride';
 
 import Link from 'next/link';
 
 export default function Join() {
 
-    const [run, setRun] = useState(false);
+    // const [run, setRun] = useState(false);
 
-    useEffect(() => {
-        const hasSeenTour = localStorage.getItem("hasSeenTour");
-        if (!hasSeenTour) {
-            setRun(true); // เริ่ม tutorial ครั้งแรก
-        }
-    }, []);
+    // useEffect(() => {
+    //     const hasSeenTour = localStorage.getItem("hasSeenTour");
+    //     if (!hasSeenTour) {
+    //         setRun(true); // เริ่ม tutorial ครั้งแรก
+    //     }
+    // }, []);
 
-    const handleTourEnd = (data) => {
-        if (data.status === "finished" || data.status === "skipped") {
-            localStorage.setItem("hasSeenTour", "true");
-            setRun(false);
-        }
-    };
-    const steps = [
-        { target: '.booking-input', content: 'กรอก Booking ID ที่ปรากฎบนหน้าจอหน้าห้องด้านบน', placement: "right" },
-        { target: '.student-id-input', content: 'ใส่รหัสนักศึกษา', placement: "right" },
-        { target: '.table-id-input', content: 'ใส่หมายเลขโต๊ะที่ต้องการจอง โดยให้ดูรหัสที่ติดอยู่โต๊ะ', placement: "right" },
-        { target: '.radio-group', content: 'เลือกสถานะการจอง', placement: "right" },
-        { target: '.submit-btn', content: 'กดปุ่มนี้เพื่อจองคิว', placement: "right" }
-    ];
+    // const handleTourEnd = (data) => {
+    //     if (data.status === "finished" || data.status === "skipped") {
+    //         localStorage.setItem("hasSeenTour", "true");
+    //         setRun(false);
+    //     }
+    // };
+    // const steps = [
+    //     { target: '.booking-input', content: 'กรอก Booking ID ที่ปรากฎบนหน้าจอหน้าห้องด้านบน', placement: "right" },
+    //     { target: '.student-id-input', content: 'ใส่รหัสนักศึกษา', placement: "right" },
+    //     { target: '.table-id-input', content: 'ใส่หมายเลขโต๊ะที่ต้องการจอง โดยให้ดูรหัสที่ติดอยู่โต๊ะ', placement: "right" },
+    //     { target: '.radio-group', content: 'เลือกสถานะการจอง', placement: "right" },
+    //     { target: '.submit-btn', content: 'กดปุ่มนี้เพื่อจองคิว', placement: "right" }
+    // ];
 
     const [bookingPin, setBookingPin] = useState('')
     const [studentId, setStudentId] = useState('')
@@ -245,18 +245,7 @@ export default function Join() {
     return (
         <>
             {/* <TourGuide /> */}
-            <Joyride
-                steps={steps}
-                run={run}
-                continuous
-                showSkipButton
-                disableOverlayClose
-                locale={{ next: "ถัดไป", back: "ย้อนกลับ", skip: "ข้าม", last: "เสร็จสิ้น" }}
-                callback={handleTourEnd}
-                styles={{
-                    options: { arrowColor: "#fff", primaryColor: "#007bff", textColor: "#333" },
-                }}
-            />
+
             <div className={`flex h-screen items-center justify-center bg-gradient-to-r from-purple-400 to-indigo-400 ${kanit.className}`}>
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
