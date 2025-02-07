@@ -13,6 +13,7 @@ import { Skeleton } from "@heroui/skeleton";
 import { FaBookmark, FaUserCog } from "react-icons/fa";
 import { AiFillSetting } from "react-icons/ai";
 import { Spinner } from "@heroui/react";
+import { MdFeedback } from "react-icons/md";
 const DataTable = dynamic(
   () => import('../../components/DataTable'),
   {
@@ -138,6 +139,15 @@ export default function RoomFloorPlan(props) {
                               </Link>
                             </li>
                             <li>
+                              <Link
+                                href="https://bookinglab.featurebase.app/"
+                                target='_blank'
+                                className="block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                              >
+                                Feedback
+                              </Link>
+                            </li>
+                            <li>
                               <a
                                 onClick={() => signOut({ callbackUrl: '/login' })}
                                 className="block px-4 py-2 text-sm cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
@@ -180,6 +190,12 @@ export default function RoomFloorPlan(props) {
                   <Link href={`/s/${id}`} className="flex items-center p-2 pl-4 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                     <AiFillSetting className="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" />
                     <span className="flex-1 ms-3 whitespace-nowrap">Setting</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link href={`https://bookinglab.featurebase.app/`} target="_blank" className="flex items-center p-2 pl-4 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                    <MdFeedback className="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" />
+                    <span className="flex-1 ms-3 whitespace-nowrap">Feedback</span>
                   </Link>
                 </li>
               </ul>
