@@ -11,9 +11,11 @@ export async function GET(req, { params }) {
 
         const { slug } = await params
         const promisePool = mysqlPool.promise();
-        let [lab] = await promisePool.query('SELECT * FROM Labs WHERE subject = ? ORDER BY createdAt ASC', [slug]);
+        let [lab] = await promisePool.query('SELECT * FROM Labs WHERE subject = ? ORDER BY createdAt DESC', [slug]);
+        let [check] = await promisePool.query('SELECT id,name,SST FROM Subjects WHERE id = ? ', [slug]);
         const data = {
             length: lab.length,
+            subdetail: check[0],
             lab,
         };
 

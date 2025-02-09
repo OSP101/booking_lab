@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import React, { useState, useEffect } from 'react'
 import { GoPlus } from "react-icons/go";
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure, Input, Textarea } from "@heroui/react";
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure, Input, Textarea, Select, SelectItem } from "@heroui/react";
 import { useSession } from 'next-auth/react'
 import imagemind1 from '../../../public/mind-4eve-8.jpg'
 import imagemind2 from '../../../public/mind-4eve-5.jpg'
@@ -23,6 +23,12 @@ export default function CardMain() {
     const [isInvalidName, setIsInvalidName] = useState(false);
     const [isInvalidID, setIsInvalidID] = useState(false);
 
+    const [value, setValue] = useState("");
+
+    const handleSelectionChange = (e) => {
+        setValue(e.target.value);
+    };
+
     useEffect(() => {
         if (session.user) {
             getDataSubject();
@@ -40,7 +46,8 @@ export default function CardMain() {
             const dataForm = {
                 id: valueName,
                 name: valueYear,
-                userid: session.user.id
+                userid: session.user.id,
+                sst: value == "" ? null : value
             }
 
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/v1/subject`, {
@@ -65,6 +72,7 @@ export default function CardMain() {
         onClose();
         setValueName("");
         setValueYear("");
+        setValue("");
     }
 
     const onInputChangeID = (e) => {
@@ -188,6 +196,16 @@ export default function CardMain() {
                                 <ModalBody>
                                     <Input isRequired isInvalid={isInvalidID} errorMessage="The subjectID already exists." isClearable label="Subject ID" placeholder="Enter your subject ID" type="text" value={valueName} onValueChange={onInputChangeID} />
                                     <Textarea isRequired isInvalid={isInvalidName} errorMessage="Subject names should be no more than 255 characters long." description="Course names should be no more than 255 characters long." isClearable label="Subject name" placeholder="Enter your subject name" value={valueYear} onValueChange={onInputChangeName} />
+                                    <Select className={kanit.className} label="Scoring system" placeholder="Select website" size='sm' selectedKeys={[value]} onChange={handleSelectionChange}>
+                                        <SelectItem key={'1'} textValue="IT WWRY">
+                                            IT WWRY
+                                            <p className='text-xs text-gray-400'>Scoring system of https://it.wwry.net</p>
+                                        </SelectItem>
+                                        <SelectItem key={'2'} textValue="Scoring Classroom">
+                                            Scoring Classroom
+                                            <p className='text-xs text-gray-400'>Scoring system of https://sc.osp101.dev</p>
+                                        </SelectItem>
+                                    </Select>
                                 </ModalBody>
                                 <ModalFooter>
                                     <Button color="danger" variant="light" onPress={cancelForm}>

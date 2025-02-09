@@ -14,6 +14,7 @@ import { FaBookmark, FaUserCog } from "react-icons/fa";
 import { AiFillSetting } from "react-icons/ai";
 import { Spinner } from "@heroui/react";
 import { MdFeedback } from "react-icons/md";
+import NewVersionModal from "../../components/NewVersionModal";
 const DataTable = dynamic(
   () => import('../../components/DataTable'),
   {
@@ -67,6 +68,7 @@ export default function RoomFloorPlan(props) {
       status === 'authenticated' &&
       session.user && (
         <>
+          <NewVersionModal />
           <nav className={`fixed top-0 z-50 w-full bg-white border-b border-gray-200 shadow-lg dark:bg-gray-800 dark:border-gray-700 ${kanit.className}`}>
             <div className="px-3 py-3 lg:px-5 lg:pl-3">
               <div className="flex items-center justify-between">
@@ -213,7 +215,7 @@ export default function RoomFloorPlan(props) {
                   <LoadingStart />)}
 
               </main>
-              <footer className="py-4 px-4 text-center">
+              <footer className=" px-4 text-center">
                 <p className="text-xs font-light text-gray-400">
                   © 2024 Booking Lab v{process.env.NEXT_PUBLIC_VERSION}
                   <span className="w-1 h-1 bg-gray-400 rounded-full" />

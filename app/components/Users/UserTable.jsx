@@ -283,7 +283,7 @@ export default function DataTable({ subjectId }) {
         return filteredUsers
     }, [dataUsers, filterValue, hasSearchFilter])
 
-    const rowsPerPage = 6
+    const rowsPerPage = 5
     const [page, setPage] = useState(1)
     const pages = Math.ceil(filteredItems.length / rowsPerPage)
 

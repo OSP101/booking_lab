@@ -54,7 +54,7 @@ export async function PUT(req) {
             let [check1] = await promisePool.query('DELETE FROM Queue WHERE lab_id = ? AND student_id = ?', [labId, studentId]);
             return NextResponse.json(check1);
         }
-        if (status == "available") {
+        if (status == "available" || status == "in-progress" || status == "progress" || status == "issue") {
             let [check1] = await promisePool.query('UPDATE Queue SET status = ? ,user_id = ? WHERE lab_id = ? AND student_id = ?', [status, userId, labId, studentId]);
             return NextResponse.json(check1);
         }

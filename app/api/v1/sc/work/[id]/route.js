@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { mysqlPool } from "../../../../../../utils/db";
+import { mysqlPool } from "../../../../../../utils/dbcloud";
 import { z } from 'zod';
 
 export async function GET(req, { params }) {
@@ -11,15 +11,9 @@ export async function GET(req, { params }) {
 
         const { id } = await params
         const promisePool = mysqlPool.promise();
-        let [check] = await promisePool.query('SELECT id,name,SST FROM Subjects WHERE id = ? ', [id]);
+        let [check] = await promisePool.query('SELECT * FROM titelwork WHERE idcourse = ? AND typework = ? AND delete_at IS NULL',[id , 1]);
 
-        const data = {
-            length: check.length,
-            status: check.length > 0 ? true : false,
-            check
-        }
-
-        return NextResponse.json(data); // ส่งข้อมูลกลับ
+        return NextResponse.json(check); // ส่งข้อมูลกลับ
     } catch (error) {
         console.error('Error fetching year:', error);
         return NextResponse.json(

@@ -13,7 +13,7 @@ import Snackbar from '@mui/material/Snackbar';
 import AlertTitle from '@mui/material/AlertTitle';
 import { Prompt } from "next/font/google";
 const kanit = Prompt({ subsets: ["latin"], weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'] });
-
+import { FcCollaboration } from "react-icons/fc";
 
 export default function Booking(props) {
     const { data: session, status } = useSession()
@@ -41,6 +41,8 @@ export default function Booking(props) {
 
     const [stdidDelete, setStdidDelete] = useState('');
 
+    const [statusSwitch, setStatusSwitch] = useState(false);
+
     const router = useRouter()
     let audio = new Audio("/notification.mp3");
 
@@ -63,7 +65,8 @@ export default function Booking(props) {
     }, [status, router])
 
     const openModalDelete = (data, Qdata) => {
-        setStdidDelete(data)
+        setStdidDelete(data);
+        handleConfirmationQueue(data, "progress");
         if (Qdata == "in-progress") {
             onOpen()
         } else {
@@ -83,6 +86,7 @@ export default function Booking(props) {
     const switchState = async (e) => {
 
         // audio.play();
+        setStatusSwitch(true);
         const dataStatus = e ? "active" : "inactive";
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/v1/booking/${slug}`, {
@@ -97,11 +101,13 @@ export default function Booking(props) {
             if (response.ok) {
                 setIsSelected(e);
                 setBookingData(data.bookingDetail);
+                setStatusSwitch(false);
                 audio.play().then(() => {
                     console.log("✅ เปิดเสียงแจ้งเตือนสำเร็จ");
                 }).catch(err => console.error("❌ ไม่สามารถเล่นเสียงได้:", err));
             } else {
                 console.error("Failed to fetch queue data.");
+                setStatusSwitch(false);
             }
         } catch (error) {
             console.error('Error fetching queue data:', error);
@@ -418,6 +424,43 @@ export default function Booking(props) {
         }
     };
 
+    const handleConfirmationQueue = async (data, status) => {
+        try {
+            const dataForm = {
+                userId: session.user.id,
+                labId: slug,
+                studentId: data,
+                status: status
+            }
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/v1/queue`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-requested-enter': process.env.NEXT_PUBLIC_API_HEAS,
+                },
+                body: JSON.stringify(dataForm)
+            });
+            if (response.ok) {
+                getQueue();
+                socket.emit("checkQ", slug)
+            } else {
+                console.error("Failed to fetch booking data.");
+            }
+        } catch (error) {
+            console.error('Error fetching booking data:', error);
+        }
+    }
+
+    const clonseModalDelete = (data) => {
+        handleConfirmationQueue(data, "in-progress");
+        onCloseDelete();
+    }
+
+    const clonseModalDeleteDe = (data) => {
+        handleConfirmationQueue(data, "issue");
+        onCloseDeleteIssue();
+    }
+
 
     if (isNotFound == 1 && loadingData) {
         return (
@@ -450,7 +493,12 @@ export default function Booking(props) {
                                     {roomData.map((table, index) => (
                                         <div
                                             key={table.id || `room-${index}`}
-                                            onClick={() => table.status === "in-progress" && openModalDelete(table.studentId)}
+                                            onClick={() => {
+                                                console.log(table.status);
+                                                if (table.status === "in-progress" || table.status === "progress") {
+                                                    openModalDelete(table.studentId, table.status);
+                                                }
+                                            }}
                                             className={`absolute flex items-center justify-center w-11 h-11 border rounded-lg 
                                             ${table.status === "available"
                                                     ? "bg-green-200"
@@ -458,14 +506,15 @@ export default function Booking(props) {
                                                         ? "bg-yellow-200"
                                                         : table.status === "done"
                                                             ? "bg-gray-400"
-                                                            : table.status === "issue" ? "bg-red-400" : "bg-gray-400"
+                                                            : table.status === "issue" ? "bg-red-200"
+                                                                : table.status === "progress" ? "border-yellow-500" : "bg-gray-400"
                                                 }`}
                                             style={{
                                                 left: `${table.x}px`,
                                                 top: `${table.y}px`,
                                             }}
                                         >
-                                            <p>{table.name}</p>
+                                            {table.status === "progress" ? (<FcCollaboration className="text-2xl" />) : (<p>{table.name}</p>)}
                                         </div>
                                     ))}
                                 </div>
@@ -496,6 +545,7 @@ export default function Booking(props) {
                                         <Switch
                                             isSelected={isSelected}
                                             onValueChange={(e) => switchState(e)}
+                                            isDisabled={statusSwitch}
                                             classNames={{
                                                 base: cn(
                                                     "inline-flex flex-row-reverse w-full max-w-md bg-content1 hover:bg-content2 items-center",
@@ -562,7 +612,7 @@ export default function Booking(props) {
                     </div>
                 </div>
 
-                <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+                <Modal isOpen={isOpen} onOpenChange={onOpenChange} isDismissable={false} isKeyboardDismissDisabled={true}>
                     <ModalContent>
                         {(onCloseDelete) => (
                             <>
@@ -583,7 +633,7 @@ export default function Booking(props) {
                                         Delete
                                     </Button>
                                     <div>
-                                        <Button color="danger" variant="light" onPress={onCloseDelete}>
+                                        <Button color="danger" variant="light" onPress={() => clonseModalDelete(stdidDelete)}>
                                             Close
                                         </Button>
                                         <Button color="success" onPress={() => handleConfirmQueue()} isLoading={isLoadingDelete}>
@@ -596,7 +646,7 @@ export default function Booking(props) {
                     </ModalContent>
                 </Modal>
 
-                <Modal isOpen={isOpenIssue} onOpenChange={onOpenChangeIssue}>
+                <Modal isOpen={isOpenIssue} onOpenChange={onOpenChangeIssue} isDismissable={false} isKeyboardDismissDisabled={true}>
                     <ModalContent>
                         {(onCloseDeleteIssue) => (
                             <>
@@ -611,7 +661,7 @@ export default function Booking(props) {
                                         Delete
                                     </Button>
                                     <div>
-                                        <Button color="danger" variant="light" onPress={onCloseDeleteIssue}>
+                                        <Button color="danger" variant="light" onPress={() => clonseModalDeleteDe(stdidDelete)}>
                                             Close
                                         </Button>
                                     </div>
@@ -645,7 +695,7 @@ export default function Booking(props) {
 function LoadingStart() {
     return (
         <div className="min-h-screen flex items-center justify-center">
-          <Spinner size="lg" />
+            <Spinner size="lg" />
         </div>
-      )
+    )
 }

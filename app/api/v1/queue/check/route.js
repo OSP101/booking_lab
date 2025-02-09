@@ -18,7 +18,7 @@ export async function POST(req) {
 
         const promisePool = mysqlPool.promise();
 
-        let [check1] = await promisePool.query('SELECT table_id, student_id AS studentId, status, create_at AS time FROM Queue WHERE lab_id = ? AND status != ? AND status != ?', [labId,"done","available"]);
+        let [check1] = await promisePool.query('SELECT table_id, student_id AS studentId, status, create_at AS time FROM Queue WHERE lab_id = ? AND status != ? AND status != ? AND status != ?', [labId,"done","available","progress"]);
         
         const data = {
             queue: check1

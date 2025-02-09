@@ -7,6 +7,7 @@ import { Prompt } from "next/font/google";
 const kanit = Prompt({ subsets: ["latin"], weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'] });
 import dynamic from 'next/dynamic'
 import NavBar from "./components/NavBar";
+import NewVersionModal from "./components/NewVersionModal";
 import { Spinner } from "@heroui/react";
 const CardMain = dynamic(
   () => import('./components/Cards/CardMain'),
@@ -28,6 +29,7 @@ export default function RoomFloorPlan() {
       <>
         <NavBar />
         <div className={`min-h-screen flex flex-col ${kanit.className}`}>
+          <NewVersionModal />
           <main className='flex-grow container mx-auto pt-20'>
             <CardMain />
           </main>

@@ -22,7 +22,7 @@ const postCheckHandler = async (req) => {
         const body = await req.json();
         const promisePool = mysqlPool.promise();
         // ตรวจสอบค่าที่จำเป็น
-        const { id, name, userid } = body;
+        const { id, name, userid, sst } = body;
         if (!id || !name) {
           return NextResponse.json(
             { error: 'Missing required fields' },
@@ -30,7 +30,7 @@ const postCheckHandler = async (req) => {
           );
         }
 
-        let [sub] = await promisePool.query('INSERT INTO Subjects(id, name, status) VALUES (?, ?, ?)',[id, name, "active"]);
+        let [sub] = await promisePool.query('INSERT INTO Subjects(id, name, status, SST) VALUES (?, ?, ?, ?)',[id, name, "active", sst]);
         let [sub2] = await promisePool.query('INSERT INTO Enllo(userid, subjectid) VALUES (?, ?)',[userid, id]);
         
 

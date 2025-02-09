@@ -13,9 +13,6 @@ import AlertTitle from '@mui/material/AlertTitle';
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { Prompt } from "next/font/google";
-import Link from "next/link";
-import Image from 'next/image'
-import { CiCircleInfo } from "react-icons/ci";
 
 const kanit = Prompt({
   subsets: ["latin"],
@@ -58,12 +55,13 @@ export default function DataTable({ id }) {
   const [openErrorDelete, setOpenErrorDelete] = useState(false);
   const [textError, setTextError] = useState('');
   const [dataRooms, setDataRooms] = useState([]);
-  const [dataSubjects, setDataSubjects] = useState([]);
+  const [dataSubjects, setDataSubjects] = useState();
+  const [workAll, setWorkAll] = useState([])
   const [isSelected, setIsSelected] = useState(true);
   const [dataDeleteLabs, setDataDeleteLabs] = useState(null);
 
 
-  const [advancedSet , setAdvancedSet] = useState(false)
+  const [advancedSet, setAdvancedSet] = useState(false)
   const [isSelectedRe, setIsSelectedRe] = useState("1");
 
   const handleClose = (event, reason) => {
@@ -114,8 +112,14 @@ export default function DataTable({ id }) {
     if (id) {
       getLab();
       getRoom();
+      
     }
   }, [id]);
+
+  const openModalLab = () => {
+    getSub();
+    onOpenAdd();
+  }
 
 
   const getLab = async () => {
@@ -135,6 +139,7 @@ export default function DataTable({ id }) {
       }
       const dataLabs = await response.json();
       setDataLabs(dataLabs.lab);
+      setDataSubjects(dataLabs.subdetail);
       setIsLoadingData(false);
     } catch (error) {
       console.error('Error fetching labs:', error);
@@ -163,6 +168,28 @@ export default function DataTable({ id }) {
     }
   }
 
+  const getSub = async () => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/v1/sc/work/${id}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-requested-enter': process.env.NEXT_PUBLIC_API_HEAS || ""
+        }
+      });
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error);
+
+      }
+
+      const dataSub = await response.json();
+      setWorkAll(dataSub);
+    } catch (error) {
+      console.error('Error fetching labs:', error);
+    }
+  }
+
 
   const handleSubmitLab = async (data) => {
     setStatusUpdate(true);
@@ -175,9 +202,8 @@ export default function DataTable({ id }) {
         room: data.room,
         image: '/mind-4eve-2.png',
         status: 'inactive',
-        redirect: isSelectedRe == "2" ? data.redirect : null ,
-        type: advancedSet ? isSelectedRe : null
-
+        redirect: dataSubjects.SST == 2 ? data.redirect : null,
+        type: dataSubjects.SST
       }
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/v1/labs`, {
         method: 'POST',
@@ -299,7 +325,7 @@ export default function DataTable({ id }) {
     setDataDeleteLabs(lab);
   }
 
-  const rowsPerPage = 6
+  const rowsPerPage = 5
   const [page, setPage] = useState(1)
   const pages = Math.ceil(filteredItems.length / rowsPerPage)
 
@@ -311,8 +337,8 @@ export default function DataTable({ id }) {
   }, [page, filteredItems])
 
   const [sortDescriptor, setSortDescriptor] = useState({
-    column: 'name',
-    direction: 'ascending'
+    column: 'createdAt',
+    direction: 'descending'
   })
 
   const sortedItems = useMemo(() => {
@@ -352,7 +378,7 @@ export default function DataTable({ id }) {
             onClear={() => onClear()}
             onValueChange={onSearchChange}
           />
-          <Button color="primary" onPress={onOpenAdd}><IoIosAdd className={`text-xl ${kanit.className}`} />Add booking</Button>
+          <Button color="primary" onPress={() => openModalLab()}><IoIosAdd className={`text-xl ${kanit.className}`} />Add booking</Button>
         </div>
 
       </div>
@@ -383,7 +409,8 @@ export default function DataTable({ id }) {
         sortDescriptor={sortDescriptor}
         onSortChange={setSortDescriptor}
         classNames={{
-          wrapper: 'min-h-[222px]'
+          wrapper: 'min-h-[222px]',
+          marginBottom: 'mb-4',
         }}
       >
         <TableHeader columns={columns}>
@@ -445,51 +472,13 @@ export default function DataTable({ id }) {
                     ))}
                   </Select>
 
-                  {/* <div className="flex">
-                    <Checkbox isSelected={isSelectedRe} onValueChange={setIsSelectedRe}>
-                      <p className='text-sm'>Add ID Lab score</p>
-                    </Checkbox>
-                    <Tooltip content="For subjects that use the sc.osp.dev scoring system">
-                      <CiCircleInfo />
-                    </Tooltip>
-                  </div>
 
-                  {isSelectedRe && (
-                    <Input
-                      isRequired
-                      errorMessage="Please enter a valid Scoring ID"
-                      label="Scoring ID"
-                      labelPlacement="outside"
-                      name="redirect"
-                      placeholder="Enter your Scoring ID"
-                      type="number"
-                    />
-                  )} */}
-
-                  <p className='text-sm text-primary cursor-pointer' onClick={()=> advancedSet ? setAdvancedSet(false) : setAdvancedSet(true)}>Advanced</p>
-                  {advancedSet && (
-                    <RadioGroup color="primary" value={isSelectedRe} onValueChange={setIsSelectedRe} size='sm'>
-                    <Radio description="Scoring system of https://it.wwry.net" value="1">
-                      IT WWRY
-                    </Radio>
-                    <Radio description="Scoring system of https://sc.osp101.dev" value="2">
-                      Scoring Classroom
-                    </Radio>
-                    
-
-                    {isSelectedRe == "2" && (
-                        <Input
-                        isRequired
-                        errorMessage="Please enter a valid Scoring ID"
-                        label="Scoring ID"
-                        labelPlacement="outside"
-                        name="redirect"
-                        placeholder="Enter your Scoring ID"
-                        type="number"
-                        className='mt-2'
-                      />
-                      )}
-                  </RadioGroup>
+                  {dataSubjects.SST == 2 && (
+                  <Select label="Lab Scoring Classroom" placeholder="Select an lab" errorMessage="Please enter a valid lab" name="redirect" labelPlacement="outside" isRequired>
+                    {workAll.map((lab) => (
+                      <SelectItem key={lab.id}>{lab.name}</SelectItem>
+                    ))}
+                  </Select> 
                   )}
 
                   <div className="flex gap-2 justify-end w-full mb-2">

@@ -219,7 +219,16 @@ export default function Join() {
                         </div>
                     </div>
 
-                    <footer className="mt-8 text-center text-sm text-white">
+                    <div className="text-center mt-4">
+                                <Link
+                                    href="https://bookinglab.featurebase.app/"
+                                    target='_blank'
+                                    className="text-md text-white transition duration-300"
+                                >
+                                    Feedback and Roadmap
+                                </Link>
+                            </div>
+                    <footer className="mt-4 text-center text-sm text-white">
                         <p className="flex items-center justify-center gap-2 text-xs">
                             © 2024 Booking Lab v1.0.5
                             <span className="w-1 h-1 bg-white rounded-full" />
@@ -320,7 +329,16 @@ export default function Join() {
                             </Button>
                         </form>
                     </div>
-                    <footer className="mt-8 text-center text-sm text-white">
+                    <div className="text-center mt-4">
+                                <Link
+                                    href="https://bookinglab.featurebase.app/"
+                                    target='_blank'
+                                    className="text-md text-white transition duration-300"
+                                >
+                                    Feedback and Roadmap
+                                </Link>
+                            </div>
+                    <footer className="mt-4 text-center text-sm text-white">
                         <p className="flex items-center justify-center gap-2 text-xs">
                             © 2024 Booking Lab v{process.env.NEXT_PUBLIC_VERSION}
                             <span className="w-1 h-1 bg-white rounded-full" />
