@@ -65,8 +65,8 @@ export default function NewVersionModal() {
                 <ModalBody>
                     <ul className="space-y-2">
                         {updates.map((update, index) => (
-                            <li key={index} className="p-2 rounded-md" style={{ backgroundColor: selectedIndex >= index ? '#f3f4f6' : 'transparent' }}>
-                                <strong>{update.title}</strong>
+                            <li key={index} className="p-2 rounded-md" style={{ backgroundColor: selectedIndex === index ? '#f3f4f6' : 'transparent' }}>
+                                {selectedIndex === index ? (<strong>{update.title}</strong>) : (<p>{update.title}</p>)}
                                 {selectedIndex === index && update.content}
                             </li>
                         ))}
