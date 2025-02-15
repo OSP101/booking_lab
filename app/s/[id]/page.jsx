@@ -171,7 +171,7 @@ export default function RoomFloorPlan(props) {
                             <li>
                               <a
                                 onClick={() => signOut({ callbackUrl: '/login' })}
-                                className="block px-4 py-2 text-sm cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                                className="block px-4 py-2 text-sm cursor-pointer hover:bg-red-100 text-red-600"
                               >
                                 Sign out
                               </a>

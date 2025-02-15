@@ -9,37 +9,12 @@ import { FcOk, FcCollaboration } from "react-icons/fc";
 import { Prompt } from "next/font/google";
 const kanit = Prompt({ subsets: ["latin"], weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'] });
 import { motion } from 'framer-motion';
-
+import { useSearchParams } from 'next/navigation'
 import PreventClose from '../components/PreventClose';
-// import TourGuide from "../components/TourGuide";
-// import Joyride, { Step } from 'react-joyride';
 
 import Link from 'next/link';
 
 export default function Join() {
-
-    // const [run, setRun] = useState(false);
-
-    // useEffect(() => {
-    //     const hasSeenTour = localStorage.getItem("hasSeenTour");
-    //     if (!hasSeenTour) {
-    //         setRun(true); // เริ่ม tutorial ครั้งแรก
-    //     }
-    // }, []);
-
-    // const handleTourEnd = (data) => {
-    //     if (data.status === "finished" || data.status === "skipped") {
-    //         localStorage.setItem("hasSeenTour", "true");
-    //         setRun(false);
-    //     }
-    // };
-    // const steps = [
-    //     { target: '.booking-input', content: 'กรอก Booking ID ที่ปรากฎบนหน้าจอหน้าห้องด้านบน', placement: "right" },
-    //     { target: '.student-id-input', content: 'ใส่รหัสนักศึกษา', placement: "right" },
-    //     { target: '.table-id-input', content: 'ใส่หมายเลขโต๊ะที่ต้องการจอง โดยให้ดูรหัสที่ติดอยู่โต๊ะ', placement: "right" },
-    //     { target: '.radio-group', content: 'เลือกสถานะการจอง', placement: "right" },
-    //     { target: '.submit-btn', content: 'กดปุ่มนี้เพื่อจองคิว', placement: "right" }
-    // ];
 
     const [bookingPin, setBookingPin] = useState('')
     const [studentId, setStudentId] = useState('')
@@ -54,6 +29,16 @@ export default function Join() {
     const [queue, setQueue] = useState([])
     const [socket, setSocket] = useState(undefined)
     const [selected, setSelected] = useState("in-progress");
+
+    const searchParams = useSearchParams()
+ 
+    const pin = searchParams.get('booking-pin')
+
+    useEffect(() => {
+        if (pin) {
+            setBookingPin(pin)
+        }
+    },[])
 
     useEffect(() => {
         const socket = io(`${process.env.NEXT_PUBLIC_API_SOCKET}`);

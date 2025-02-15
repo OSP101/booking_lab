@@ -15,16 +15,8 @@ const updates = [
         content: <p className="mt-2 text-sm">เมื่อคุณกำลังตรวจงาน <span className="font-semibold text-blue-600">ให้กดที่คิวแล้วเปิดป๊อปอัพค้างไว้</span> เพื่ออัปเดตสถานะเป็น <span className="font-bold text-green-600">กำลังตรวจ</span> จากนั้นไอคอนที่ผังหน้าห้องจะเปลี่ยนไปโดยอัตโนมัติ</p>
     },
     {
-        title: "🔗 ลิงก์ระบบลงคะแนนใหม่",
-        content: <p className="mt-2 text-sm">เราได้ <span className="font-bold text-green-600">ปรับปรุงระบบลงคะแนน</span> ให้คุณสามารถ <span className="text-blue-600">เลือกหัวข้อแลป</span> ที่สร้างไว้ในระบบได้โดยตรง แทนการกรอกไอดีเอง</p>
-    },
-    {
-        title: "⚡ โหลดเร็วขึ้น 30%",
-        content: <p className="mt-2 text-sm">เว็บไซต์ได้รับการ <span className="font-bold text-green-600">ปรับปรุงประสิทธิภาพ</span> ให้ <span className="text-blue-600">โหลดเร็วขึ้น 30%</span> เพื่อประสบการณ์การใช้งานที่ดียิ่งขึ้น</p>
-    },
-    {
-        title: "📢 ช่องทางแจ้งปัญหา & เสนอฟีเจอร์ใหม่",
-        content: <p className="mt-2 text-sm">เรามี <span className="font-bold text-red-600">ช่องทางใหม่</span> สำหรับแจ้งปัญหาและเสนอฟีเจอร์เพิ่มเติม หากคุณพบปัญหาในการใช้งาน หรือมีไอเดียใหม่ ๆ <span className="text-blue-600">แจ้งเราได้เลย</span> 👉 <Link href="https://bookinglab.featurebase.app/en" target="_blank" className="text-sky-700 underline">คลิกที่นี่</Link></p>
+        title: "🔗 QR Code join",
+        content: <p className="mt-2 text-sm">เราได้ <span className="font-bold text-green-600">เพิ่ม QR Code</span> ให้นักศึกษาสามารถ <span className="text-blue-600">เข้าหน้า Booking </span>ได้สะดวกขึ้น แทนการกรอกไอดีเอง</p>
     }
 ];
 
@@ -33,7 +25,7 @@ export default function NewVersionModal() {
     const [selectedIndex, setSelectedIndex] = useState(0);
 
     useEffect(() => {
-        const hasSeenModal = localStorage.getItem('new_version_modal');
+        const hasSeenModal = localStorage.getItem('new_version_modal_1');
         if (!hasSeenModal) {
             setIsOpen(true);
         }
@@ -54,14 +46,15 @@ export default function NewVersionModal() {
     };
 
     const handleClose = () => {
-        localStorage.setItem('new_version_modal', 'true');
+        localStorage.setItem('new_version_modal_1', 'true');
+        localStorage.setItem('new_version_modal', 'flase');
         setIsOpen(false);
     };
 
     return (
         <Modal isOpen={isOpen} onClose={handleClose} backdrop="blur" className={`${kanit.className}`} isDismissable={false} isKeyboardDismissDisabled={true}>
             <ModalContent>
-                <ModalHeader className="text-xl font-bold">🎉 Version 1.0.1 อัปเดตใหม่มาแล้ว! 🎉</ModalHeader>
+                <ModalHeader className="text-xl font-bold">🎉 Version 1.0.2 ใหม่มาแล้ว! 🎉</ModalHeader>
                 <ModalBody>
                     <ul className="space-y-2">
                         {updates.map((update, index) => (

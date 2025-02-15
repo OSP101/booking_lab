@@ -14,6 +14,7 @@ import AlertTitle from '@mui/material/AlertTitle';
 import { Prompt } from "next/font/google";
 const kanit = Prompt({ subsets: ["latin"], weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'] });
 import { FcCollaboration } from "react-icons/fc";
+import { QRCodeCanvas } from "qrcode.react";
 
 export default function Booking(props) {
     const { data: session, status } = useSession()
@@ -59,10 +60,12 @@ export default function Booking(props) {
     }, []);
 
     useEffect(() => {
-        if (status === 'unauthenticated') {
-            router.push('/login')
+        if (status === "loading") return;
+        if (status === "unauthenticated") {
+
+            router.push("/login");
         }
-    }, [status, router])
+    }, [status, router]);
 
     const openModalDelete = (data, Qdata) => {
         setStdidDelete(data);
@@ -253,13 +256,19 @@ export default function Booking(props) {
         });
 
         socket.on("queueGetData", (data) => {
-            console.log("🔔 มีข้อความใหม่:", data);
-            audio.play().catch(err => console.error("เล่นเสียงไม่ได้:", err));
-            getQueue();
+            console.log("queueGetData:", data.data == slug);
+            if (data.data == slug) {
+                audio.play().catch(err => console.error("เล่นเสียงไม่ได้:", err));
+                getQueue(data);
+            }
+
         })
 
         socket.on("checkQ", (data) => {
-            getQueue();
+            console.log("checkQ:", data.data == slug);
+            if (data.data == slug) {
+                getQueue(data);
+            }
         })
 
         setSocket(socket);
@@ -467,16 +476,19 @@ export default function Booking(props) {
             <div className={`h-screen flex bg-gray-100 items-end justify-center ${kanit.className}`}>
                 <div className="w-[98%] h-screen mx-auto">
                     {windowWidth >= 768 && (
-                        <div className="bg-white h-[15%] p-6 rounded-xl shadow-md flex w-[40%] mb-2 mx-auto">
-                            <div className="flex justify-center items-center w-full">
+                        <div className="bg-white h-[15%] p-6 rounded-xl shadow-md flex w-[42%] mb-2 mx-auto">
+                            <div className="flex justify-start items-center w-full">
                                 <div className="w-1/2">
-                                    <p className="text-end text-lg">Join at <span className="font-bold">10.199.7.28/join</span></p>
+                                    <p className="text-end text-md">Join at <span className="font-bold text-2xl">10.199.7.28/join</span></p>
                                     <p className="text-end text-md">{timeDate}</p>
                                 </div>
                                 <Divider orientation="vertical" className="mx-2 font-bold" />
-                                <div className="w-1/2">
+                                <div>
                                     <p className="text-xs font-bold">Booking PIN:</p>
                                     <p className="text-5xl font-black">{bookingData.pin || "-"}</p>
+                                </div>
+                                <div className="ml-3">
+                                    {bookingData.pin && <QRCodeCanvas value={`http://192.168.1.101:3000/join?booking-pin=${bookingData.pin}`} size={95} />}
                                 </div>
                             </div>
                         </div>
@@ -541,7 +553,7 @@ export default function Booking(props) {
                                         <p className="text-sm text-gray-600">Room:</p>
                                         <p className="text-sm font-medium">{bookingData.room}</p>
                                     </div>
-                                    {(session.user.role == "admin" || session.user.role == "teacher") && (
+                                    {(session?.user?.role == "admin" || session?.user?.role == "teacher") && (
                                         <Switch
                                             isSelected={isSelected}
                                             onValueChange={(e) => switchState(e)}
