@@ -11,11 +11,19 @@ const kanit = Prompt({ subsets: ["latin"], weight: ['100', '200', '300', '400', 
 import { motion } from 'framer-motion';
 import { useSearchParams } from 'next/navigation'
 import PreventClose from '../components/PreventClose';
+import { Spinner } from "@heroui/react";
 
 import Link from 'next/link';
 
 export default function Join() {
+    return (
+        <Suspense fallback={<LoadingStart/>}>
+            <JoinPage />
+        </Suspense>
+    );
+}
 
+function JoinPage() {
     const [bookingPin, setBookingPin] = useState('')
     const [studentId, setStudentId] = useState('')
     const [tableId, setTableId] = useState('')
@@ -358,3 +366,11 @@ export default function Join() {
         </>
     );
 }
+
+function LoadingStart() {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Spinner size="lg" />
+      </div>
+    )
+  }
