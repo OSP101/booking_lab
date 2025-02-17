@@ -6,6 +6,7 @@ import Snackbar from '@mui/material/Snackbar';
 import AlertTitle from '@mui/material/AlertTitle';
 import io from "socket.io-client";
 import { FcOk, FcCollaboration } from "react-icons/fc";
+import { FaRedoAlt } from "react-icons/fa";
 import { Prompt } from "next/font/google";
 const kanit = Prompt({ subsets: ["latin"], weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'] });
 import { motion } from 'framer-motion';
@@ -17,7 +18,7 @@ import Link from 'next/link';
 
 export default function Join() {
     return (
-        <Suspense fallback={<LoadingStart/>}>
+        <Suspense fallback={<LoadingStart />}>
             <JoinPage />
         </Suspense>
     );
@@ -39,14 +40,14 @@ function JoinPage() {
     const [selected, setSelected] = useState("in-progress");
 
     const searchParams = useSearchParams()
- 
+
     const pin = searchParams.get('booking-pin')
 
     useEffect(() => {
         if (pin) {
             setBookingPin(pin)
         }
-    },[])
+    }, [])
 
     useEffect(() => {
         const socket = io(`${process.env.NEXT_PUBLIC_API_SOCKET}`);
@@ -155,6 +156,12 @@ function JoinPage() {
         }
     };
 
+    const resetForm = () => {
+        setDataBooking("");
+        setOpen(false);
+        setCountQueue("")
+    }
+
     if (open) {
         return (
             <div className={`flex h-screen items-center justify-center bg-gradient-to-r from-purple-400 to-indigo-400 ${kanit.className}`}>
@@ -212,15 +219,17 @@ function JoinPage() {
                         </div>
                     </div>
 
-                    <div className="text-center mt-4">
-                                <Link
-                                    href="https://bookinglab.featurebase.app/"
-                                    target='_blank'
-                                    className="text-md text-white transition duration-300"
-                                >
-                                    Feedback and Roadmap
-                                </Link>
-                            </div>
+                    {countQueue == 'Not' && <div className="text-center mt-4">
+                        <Button
+                            type="button"
+                            className="w-full text-white hover:text-black font-medium rounded-md transition duration-300 mt-1"
+                            size="md"
+                            variant="ghost"
+                            onPress={resetForm}
+                        >
+                            <FaRedoAlt /> Reset
+                        </Button>
+                    </div>}
                     <footer className="mt-4 text-center text-sm text-white">
                         <p className="flex items-center justify-center gap-2 text-xs">
                             © 2024 Booking Lab v1.0.5
@@ -322,15 +331,7 @@ function JoinPage() {
                             </Button>
                         </form>
                     </div>
-                    <div className="text-center mt-4">
-                                <Link
-                                    href="https://bookinglab.featurebase.app/"
-                                    target='_blank'
-                                    className="text-md text-white transition duration-300"
-                                >
-                                    Feedback and Roadmap
-                                </Link>
-                            </div>
+
                     <footer className="mt-4 text-center text-sm text-white">
                         <p className="flex items-center justify-center gap-2 text-xs">
                             © 2024 Booking Lab v{process.env.NEXT_PUBLIC_VERSION}
@@ -369,8 +370,8 @@ function JoinPage() {
 
 function LoadingStart() {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Spinner size="lg" />
-      </div>
+        <div className="min-h-screen flex items-center justify-center">
+            <Spinner size="lg" />
+        </div>
     )
-  }
+}

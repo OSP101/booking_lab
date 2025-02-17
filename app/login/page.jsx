@@ -172,8 +172,8 @@ function LoginPage() {
 
                             {/* Forgot Password Link */}
                             <div className="text-center">
-                                <Link href="https://bookinglab.featurebase.app/" target='_blank' className="text-sm text-blue-500 hover:text-blue-700 transition duration-300">
-                                    Feedback and Roadmap
+                                <Link href="/recovery" className="text-sm text-blue-500 hover:text-blue-700 transition duration-300">
+                                Forgot password
                                 </Link>
                             </div>
                         </form>
