@@ -3,7 +3,7 @@ import { mysqlPool } from "../../../../utils/db";
 import { authenticateApiKey } from '../../../../lib/encrypt'
 import bcrypt from 'bcryptjs'
 import nodemailer from "nodemailer";
-import { sendResetEmail } from "@/lib/email"; 
+import { sendResetEmail } from "../../../../lib/email"; 
 
 const postLabHandler = async (req) => {
     try {
