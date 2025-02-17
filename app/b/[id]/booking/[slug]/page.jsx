@@ -488,7 +488,7 @@ export default function Booking(props) {
                                     <p className="text-5xl font-black">{bookingData.pin || "-"}</p>
                                 </div>
                                 <div className="ml-3">
-                                    {bookingData.pin && <QRCodeCanvas value={`http://192.168.1.101:3000/join?booking-pin=${bookingData.pin}`} size={95} />}
+                                    {bookingData.pin && <QRCodeCanvas value={`${process.env.NEXT_PUBLIC_URL}/join?booking-pin=${bookingData.pin}`} size={95} />}
                                 </div>
                             </div>
                         </div>
