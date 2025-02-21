@@ -153,6 +153,7 @@ export default function Booking(props) {
             const data = await response.json();
             if (response.ok) {
                 setQueue(data.queue || []);
+                console.log(data.queue)
             } else {
                 console.error("Failed to fetch queue data.");
             }
@@ -243,7 +244,7 @@ export default function Booking(props) {
     }, [session]);
 
     useEffect(() => {
-        if (roomData.length > 0 && queue.length > 0) {
+        if (roomData.length > 0) {
             updateTableStatus(roomData);
         }
     }, [queue, roomDataChach]);
@@ -300,23 +301,6 @@ export default function Booking(props) {
                     updateStatus("available");
                 }
             });
-        } else if (bookingData.type == "1") {
-            setIsLoadingDelete(true)
-            const gradingWindow = window.open("https://it.wwry.net/scoring", "_blank", "width=800,height=600");
-
-            if (!gradingWindow) {
-                alert("Popup ถูกบล็อกโดยเบราว์เซอร์! กรุณาอนุญาตให้เว็บไซต์เปิด Popup");
-                return;
-            }
-
-            gradingWindow.focus();
-
-            const checkClosed = setInterval(() => {
-                if (gradingWindow.closed) {
-                    clearInterval(checkClosed);
-                    updateStatus("available");
-                }
-            }, 500);
         } else {
             updateStatus("available");
         }
@@ -374,27 +358,6 @@ export default function Booking(props) {
         document.body.removeChild(textArea);
     };
 
-    const handleConfirmQueueIt = async () => {
-        setIsLoading(true)
-        await copyText(stdidDelete);
-
-        const gradingWindow = window.open("https://it.wwry.net/scoring", "_blank", "width=800,height=600");
-
-        if (!gradingWindow) {
-            alert("Popup ถูกบล็อกโดยเบราว์เซอร์! กรุณาอนุญาตให้เว็บไซต์เปิด Popup");
-            return;
-        }
-
-        gradingWindow.focus();
-
-        const checkClosed = setInterval(() => {
-            if (gradingWindow.closed) {
-                clearInterval(checkClosed);
-                updateStatus("done");
-            }
-        }, 500);
-    };
-
 
 
     const updateStatus = async (status) => {
@@ -407,7 +370,7 @@ export default function Booking(props) {
                 status: status
             }
 
-            console.log(dataForm)
+
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/v1/queue`, {
                 method: 'PUT',
                 headers: {
@@ -423,6 +386,7 @@ export default function Booking(props) {
                 setIsLoadingDelete(false)
                 onCloseDelete();
                 onCloseDeleteIssue();
+                console.log(dataForm)
                 socket.emit("checkQ", slug)
             } else {
                 console.error("Failed to fetch booking data.");
@@ -635,11 +599,6 @@ export default function Booking(props) {
                                     <p>
                                         Are you really going to delete queue {stdidDelete} ?
                                     </p>
-                                    {bookingData.type == "1" && (
-                                        <Snippet symbol="" variant="bordered" className="my-1">
-                                            {stdidDelete}
-                                        </Snippet>
-                                    )}
 
                                 </ModalBody>
                                 <ModalFooter className="flex justify-between">

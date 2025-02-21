@@ -50,6 +50,9 @@ export async function PUT(req) {
         }
 
         const promisePool = mysqlPool.promise();
+
+        console.log(status, labId, studentId);
+
         if (status == "done") {
             let [check1] = await promisePool.query('DELETE FROM Queue WHERE lab_id = ? AND student_id = ?', [labId, studentId]);
             return NextResponse.json(check1);
