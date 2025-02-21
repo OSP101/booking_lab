@@ -203,7 +203,7 @@ export default function DataTable({ id }) {
         image: '/mind-4eve-2.png',
         status: 'inactive',
         redirect: dataSubjects.SST == 2 ? data.redirect : null,
-        type: dataSubjects.SST
+        type: dataSubjects.SST == 2 ? dataSubjects.SST : null,
       }
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/v1/labs`, {
         method: 'POST',
