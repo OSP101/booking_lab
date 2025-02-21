@@ -153,7 +153,7 @@ export default function Booking(props) {
             const data = await response.json();
             if (response.ok) {
                 setQueue(data.queue || []);
-                console.log(data.queue)
+                // console.log(data.queue)
             } else {
                 console.error("Failed to fetch queue data.");
             }
@@ -257,7 +257,7 @@ export default function Booking(props) {
         });
 
         socket.on("queueGetData", (data) => {
-            console.log("queueGetData:", data.data == slug);
+            // console.log("queueGetData:", data.data == slug);
             if (data.data == slug) {
                 audio.play().catch(err => console.error("เล่นเสียงไม่ได้:", err));
                 getQueue(data);
@@ -266,7 +266,7 @@ export default function Booking(props) {
         })
 
         socket.on("checkQ", (data) => {
-            console.log("checkQ:", data.data == slug);
+            // console.log("checkQ:", data.data == slug);
             if (data.data == slug) {
                 getQueue(data);
             }
