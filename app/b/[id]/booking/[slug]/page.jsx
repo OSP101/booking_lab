@@ -406,6 +406,8 @@ export default function Booking(props) {
                 studentId: stdidDelete,
                 status: status
             }
+
+            console.log(dataForm)
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/v1/queue`, {
                 method: 'PUT',
                 headers: {
@@ -641,7 +643,7 @@ export default function Booking(props) {
 
                                 </ModalBody>
                                 <ModalFooter className="flex justify-between">
-                                    <Button color="primary" onPress={() => bookingData.type == "1" ? handleConfirmQueueIt() : updateStatus("done")} isLoading={isLoading}>
+                                    <Button color="primary" onPress={() => updateStatus("done")} isLoading={isLoading}>
                                         Delete
                                     </Button>
                                     <div>
